@@ -1,9 +1,13 @@
 package controllers;
 
+import LunchManCore.Apprentice;
+import LunchManCore.Rota;
 import play.mvc.*;
 
 import views.html.*;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -13,9 +17,20 @@ import java.util.List;
  */
 public class HomeController extends Controller {
 
+    private List<Apprentice> apprentices = new ArrayList<>();
+    private Rota rota = new Rota(4, LocalDate.now());
+
     public Result index() {
-        List<String> apprentices = Arrays.asList("Priya", "Mollie", "Nick", "Rabea", "Ced");
-        return ok(index.render("LunchMan", apprentices));
+        List<String> apprenticeNames = Arrays.asList("Priya", "Mollie", "Nick", "Rabea", "Ced");
+        createApprentices(apprenticeNames);
+        rota.updateSchedule(apprentices);
+        return ok(index.render("LunchMan", rota.getSchedule()));
+    }
+
+    private void createApprentices(List<String> names) {
+        for (String name : names) {
+            apprentices.add(new Apprentice(name));
+        }
     }
 
 }

@@ -1,3 +1,4 @@
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,5 +47,14 @@ public class HomeControllerTest {
         assertTrue(contentAsString(result).contains("Rabea"));
         assertTrue(contentAsString(result).contains("Ced"));
     }
-    
+
+//    @Test
+//    public void indexPageShowsDatesForTheNextFourFridays() {
+//        HomeController homeController = new HomeController();
+//        homeController.createRota(LocalDate.of(2016, 6, 8));
+//        Result result = homeController.index();
+//        assertTrue(contentAsString(result).contains();
+//
+//    }
+//
 }

@@ -1,8 +1,6 @@
-@*
- * This template takes a single argument, a String containing a
- * message to display.
- *@
-@(message: String, apprentices: List[String])
+@import LunchManCore.FridayLunch
+
+@(message: String, lunches: List[FridayLunch])
 
 @*
  * Call the `main` template with two arguments. The first
@@ -11,5 +9,8 @@
  *@
 @main(message) {
     <h1>@message</h1>
-    @apprentices
+    @for(lunch <- lunches) {
+        @lunch.getDate()
+        <h2>@lunch.getApprentice().get().getName()</h2>
+    }
 }
