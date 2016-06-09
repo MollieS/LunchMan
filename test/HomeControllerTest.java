@@ -45,7 +45,6 @@ public class HomeControllerTest {
         assertTrue(contentAsString(result).contains("Mollie"));
         assertTrue(contentAsString(result).contains("Nick"));
         assertTrue(contentAsString(result).contains("Rabea"));
-        assertTrue(contentAsString(result).contains("Ced"));
     }
 
 //    @Test
