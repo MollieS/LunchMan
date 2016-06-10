@@ -6,7 +6,6 @@ import LunchManCore.Rota;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -16,23 +15,23 @@ import java.util.List;
 
 public class CSVHelper {
 
-    public static void loadScheduleFromCSV(Rota rota, String csvFilename) throws IOException {
-        CSVReader csvReader = new CSVReader(new FileReader(csvFilename));
-        createSchedule(rota, csvReader.readAll());
-        csvReader.close();
+    public static List<FridayLunch> createScheduleFromCSV(List<FridayLunch> lunches, String csvFilename) throws IOException {
+        return createSchedule(lunches, loadCSV(csvFilename));
     }
 
-    public static void createSchedule(Rota rota, List<String[]> fridayLunches) {
+    public static List<FridayLunch> createSchedule(List<FridayLunch> lunches, List<String[]> fridayLunches) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         for (String[] lunch : fridayLunches) {
-            rota.clear();
-            rota.assign(new FridayLunch(LocalDate.parse(lunch[1], formatter)), new Apprentice(lunch[0]));
+            FridayLunch fridayLunch = new FridayLunch(LocalDate.parse(lunch[1], formatter));
+            fridayLunch.assignApprentice(new Apprentice(lunch[0]));
+            lunches.add(fridayLunch);
         }
+        return lunches;
     }
 
-    public static void saveRotaToCSV(Rota rota, String csvFilename) throws Exception {
+    public static void saveRotaToCSV(List<FridayLunch> schedule, String csvFilename) throws Exception {
         CSVWriter csvWriter = new CSVWriter(new FileWriter(csvFilename));
-        for (FridayLunch lunch : rota.getSchedule()) {
+        for (FridayLunch lunch : schedule) {
             String record = "";
             record += lunch.getApprentice().get().getName();
             record += ",";
@@ -44,20 +43,21 @@ public class CSVHelper {
     }
 
     public static List<Apprentice> createApprenticesFromCSV(List<Apprentice> apprentices, String csvFilename) throws Exception {
-        return createApprentices(apprentices, loadListOfNamesFromCSV(csvFilename));
+        return createApprentices(apprentices, loadCSV(csvFilename));
     }
 
-    public static List<Apprentice> createApprentices(List<Apprentice> apprentices, List<String[]> names) {
+    private static List<Apprentice> createApprentices(List<Apprentice> apprentices, List<String[]> names) {
         for (String[] name : names) {
             apprentices.add(new Apprentice(name[0]));
         }
         return apprentices;
     }
 
-    public static List<String[]> loadListOfNamesFromCSV(String csvPath) throws IOException {
+    private static List<String[]> loadCSV(String csvPath) throws IOException {
         CSVReader csvReader = new CSVReader(new FileReader(csvPath));
         List<String[]> result = csvReader.readAll();
         csvReader.close();
         return result;
     }
+
 }

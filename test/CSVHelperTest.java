@@ -1,4 +1,5 @@
 import LunchManCore.Apprentice;
+import LunchManCore.FridayLunch;
 import org.junit.Test;
 import services.CSVHelper;
 
@@ -12,27 +13,6 @@ import static org.junit.Assert.assertEquals;
 public class CSVHelperTest {
 
     @Test
-    public void createsApprenticesFromListOfNames() {
-        List<Apprentice> apprentices = new ArrayList<>();
-        String[] name = {"Mollie"};
-        String[] name2 = {"Nick"};
-        List<String[]> names = Arrays.asList(name, name2);
-        List<Apprentice> newApprentices = CSVHelper.createApprentices(apprentices, names);
-        assertEquals("Mollie", newApprentices.get(0).getName());
-    }
-
-    @Test
-    public void createsListOfNamesFromCSVOfNames() throws IOException {
-        String mockApprenticesCSV = "/Users/molliestephenson/Java/LunchMan/test/mockApprentices.csv";
-        List<String[]> result = CSVHelper.loadListOfNamesFromCSV(mockApprenticesCSV);
-        assertEquals(result.get(0)[0], "Mollie");
-        assertEquals(result.get(1)[0], "Nick");
-        assertEquals(result.get(2)[0], "Ced");
-        assertEquals(result.get(3)[0], "Priya");
-        assertEquals(result.get(4)[0], "Rabea");
-    }
-
-    @Test
     public void createsApprenticesFromListOfNamesInCSV() throws Exception {
         String mockApprenticesCSV = "/Users/molliestephenson/Java/LunchMan/test/mockApprentices.csv";
         List<Apprentice> result = CSVHelper.createApprenticesFromCSV(new ArrayList<>(), mockApprenticesCSV);
@@ -42,4 +22,29 @@ public class CSVHelperTest {
         assertEquals("Priya", result.get(3).getName());
         assertEquals("Rabea", result.get(4).getName());
     }
+
+    @Test
+    public void createsRotaFromCSV() throws Exception {
+        String mockSchedule = "/Users/molliestephenson/Java/LunchMan/test/mockSchedule.csv";
+        List<FridayLunch> result = CSVHelper.createScheduleFromCSV(new ArrayList<>(), mockSchedule);
+        assertEquals("Mollie", result.get(0).getApprentice().get().getName());
+        assertEquals("Nick", result.get(1).getApprentice().get().getName());
+        assertEquals("Ced", result.get(2).getApprentice().get().getName());
+        assertEquals("Priya", result.get(3).getApprentice().get().getName());
+    }
+
+   @Test
+   public void updatesSavedCSVSchedule() throws Exception {
+       String mockSchedule = "/Users/molliestephenson/Java/LunchMan/test/mockSchedule.csv";
+       String mockWriteCSV = "/Users/molliestephenson/Java/LunchMan/test/mockWriteCSV.csv";
+       List<FridayLunch> loadedSchedule = CSVHelper.createScheduleFromCSV(new ArrayList<>(), mockSchedule);
+       Apprentice rabea = new Apprentice("Rabea");
+       loadedSchedule.get(1).assignApprentice(rabea);
+       CSVHelper.saveRotaToCSV(loadedSchedule, mockWriteCSV);
+       List<FridayLunch> result = CSVHelper.createScheduleFromCSV(new ArrayList<>(), mockWriteCSV);
+       assertEquals("Mollie", result.get(0).getApprentice().get().getName());
+       assertEquals("Rabea", result.get(1).getApprentice().get().getName());
+       assertEquals("Ced", result.get(2).getApprentice().get().getName());
+       assertEquals("Priya", result.get(3).getApprentice().get().getName());
+   }
 }

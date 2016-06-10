@@ -9,8 +9,14 @@
  *@
 @main(message) {
     <h1>@message</h1>
-    @for(lunch <- lunches) {
+    @for((lunch, index) <- lunches.zipWithIndex) {
         @lunch.getDate()
         <h2>@lunch.getApprentice().get().getName()</h2>
+        <form METHOD="post" action="/changeapprentice">
+            <input type="hidden" placeholder="Week Num." value="@index" name="position"/>
+            <input type="text" placeholder="New Apprentice Name" name="newName"/>
+            <input type="submit"/>
+        </form>
+        <br>
     }
 }
