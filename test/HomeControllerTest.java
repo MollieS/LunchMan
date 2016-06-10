@@ -34,6 +34,7 @@ public class HomeControllerTest extends WithApplication{
     private String scheduleCSV;
     private String restaurantCSV;
     private List<FridayLunch> loadedSchedule;
+    private HomeController homeController;
 
     @Override
     protected Application provideApplication() {
@@ -48,6 +49,8 @@ public class HomeControllerTest extends WithApplication{
         scheduleCSV = "/Users/molliestephenson/Java/LunchMan/test/mockSchedule.csv";
         restaurantCSV = "/Users/molliestephenson/Java/LunchMan/test/mockRestaurants.csv";
         loadedSchedule = createScheduleFromCSV(new ArrayList<>(), scheduleCSV);
+        homeController = new HomeController(apprenticeCSV, scheduleCSV, restaurantCSV);
+
 
     }
 
@@ -58,14 +61,12 @@ public class HomeControllerTest extends WithApplication{
 
     @Test
     public void indexPage() {
-        HomeController homeController = new HomeController(apprenticeCSV, scheduleCSV);
         Result result = homeController.index();
         assertTrue(contentAsString(result).contains("LunchMan"));
     }
 
     @Test
     public void indexPageShowsApprenticeNames() {
-        HomeController homeController = new HomeController(apprenticeCSV, scheduleCSV);
         Result result = homeController.index();
         assertTrue(contentAsString(result).contains("Priya"));
         assertTrue(contentAsString(result).contains("Mollie"));
@@ -78,7 +79,6 @@ public class HomeControllerTest extends WithApplication{
         Map form = new HashMap<String, String>();
         form.put("position", "0");
         form.put("newName", "Ced");
-        HomeController homeController = new HomeController(apprenticeCSV, scheduleCSV);
         Result result = homeController.index();
         assertTrue(contentAsString(result).contains("Mollie"));
         assertTrue(contentAsString(result).contains("Nick"));
@@ -98,8 +98,7 @@ public class HomeControllerTest extends WithApplication{
     @Test
     public void canAssignAMenuToAFridayLunch() throws Exception {
         Map form = new HashMap<String, String>();
-        form.put("menu", "3");
-        HomeController homeController = new HomeController(apprenticeCSV, scheduleCSV, restaurantCSV);
+        form.put("restaurant", "2");
         Result result = homeController.index();
         assertTrue(contentAsString(result).contains("Please choose a menu:"));
         Result postResult = invokeWithContext(Helpers.fakeRequest().bodyForm(form),
@@ -107,7 +106,7 @@ public class HomeControllerTest extends WithApplication{
         assertEquals(SEE_OTHER, postResult.status());
         assertEquals("/", postResult.header("Location").get());
         Result finalCheck = homeController.index();
-        assertTrue(contentAsString(finalCheck).contains("Hummus Bros"));
+        assertTrue(contentAsString(finalCheck).contains("Deliveroo"));
     }
 
 }
