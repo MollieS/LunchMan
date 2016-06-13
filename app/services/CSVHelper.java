@@ -3,11 +3,9 @@ package services;
 import LunchManCore.Apprentice;
 import LunchManCore.FridayLunch;
 import LunchManCore.Restaurant;
-import LunchManCore.Rota;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 
-import java.awt.geom.IllegalPathStateException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -19,18 +17,6 @@ import java.util.List;
 public class CSVHelper {
 
     public static List<FridayLunch> createScheduleFromCSV(String csvFilename) throws IOException {
-        return createSchedule(csvFilename);
-    }
-
-    public static List<Apprentice> createApprenticesFromCSV(String csvFilename) throws Exception {
-        return createApprentices(loadCSV(csvFilename));
-    }
-
-    public static List<Restaurant> createRestaurantsFromCSV(String csvFilename) throws IOException {
-        return createRestaurants(loadCSV(csvFilename));
-    }
-
-    public static List<FridayLunch> createSchedule(String csvFilename) throws IOException {
         List<String[]> fridayLunches = loadCSV(csvFilename);
         List<FridayLunch> lunches = new ArrayList<>();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -45,7 +31,8 @@ public class CSVHelper {
         return lunches;
     }
 
-    private static List<Apprentice> createApprentices(List<String[]> names) {
+    public static List<Apprentice> createApprenticesFromCSV(String csvFilename) throws IOException {
+        List<String[]> names = loadCSV(csvFilename);
         List<Apprentice> apprentices = new ArrayList<>();
         for (String[] name : names) {
             apprentices.add(new Apprentice(name[0]));
@@ -53,7 +40,8 @@ public class CSVHelper {
         return apprentices;
     }
 
-    private static List<Restaurant> createRestaurants(List<String[]> restaurantList) {
+    public static List<Restaurant> createRestaurantsFromCSV(String csvFilename) throws IOException {
+        List<String[]> restaurantList = loadCSV(csvFilename);
         List<Restaurant> restaurants = new ArrayList<>();
         for (String[] restaurant : restaurantList) {
             restaurants.add(new Restaurant(restaurant[0], restaurant[1]));
@@ -64,18 +52,14 @@ public class CSVHelper {
     public static void saveRotaToCSV(List<FridayLunch> schedule, String csvFilename) throws Exception {
         CSVWriter csvWriter = new CSVWriter(new FileWriter(csvFilename));
         for (FridayLunch lunch : schedule) {
-            String record = "";
-            record += lunch.getApprentice().get().getName();
-            record += ",";
-            record += lunch.getDate();
+            String[] record = new String[4];
+            record[0] =  lunch.getApprentice().get().getName();
+            record[1] = lunch.getDate().toString();
             if (lunch.getRestaurant().isPresent()) {
-                record += ",";
-                record += lunch.getRestaurant().get().getName();
-                record += ",";
-                record += lunch.getRestaurant().get().getMenuLink();
+                record[2] = lunch.getRestaurant().get().getName();
+                record[3] = lunch.getRestaurant().get().getMenuLink();
             }
-            String[] recordArray = record.split(",");
-            csvWriter.writeNext(recordArray);
+            csvWriter.writeNext(record);
         }
         csvWriter.close();
     }

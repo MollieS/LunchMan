@@ -4,7 +4,6 @@ import LunchManCore.Restaurant;
 import org.junit.Test;
 import services.CSVHelper;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -28,7 +27,7 @@ public class CSVHelperTest {
         List<FridayLunch> result = CSVHelper.createScheduleFromCSV(mockSchedule);
         assertEquals("Mollie", result.get(0).getApprentice().get().getName());
         assertEquals("Nick", result.get(1).getApprentice().get().getName());
-        assertEquals("Ced", result.get(2).getApprentice().get().getName());
+        assertEquals("Rabea", result.get(2).getApprentice().get().getName());
         assertEquals("Priya", result.get(3).getApprentice().get().getName());
     }
 
@@ -52,7 +51,7 @@ public class CSVHelperTest {
        List<FridayLunch> result = CSVHelper.createScheduleFromCSV(mockWriteCSV);
        assertEquals("Mollie", result.get(0).getApprentice().get().getName());
        assertEquals("Rabea", result.get(1).getApprentice().get().getName());
-       assertEquals("Ced", result.get(2).getApprentice().get().getName());
+       assertEquals("Rabea", result.get(2).getApprentice().get().getName());
        assertEquals("Priya", result.get(3).getApprentice().get().getName());
    }
 }

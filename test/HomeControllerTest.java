@@ -11,7 +11,6 @@ import play.test.WithApplication;
 import services.CSVHelper;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +47,7 @@ public class HomeControllerTest extends WithApplication{
         apprenticeCSV = "/Users/molliestephenson/Java/LunchMan/test/mockApprentices.csv";
         scheduleCSV = "/Users/molliestephenson/Java/LunchMan/test/mockSchedule.csv";
         restaurantCSV = "/Users/molliestephenson/Java/LunchMan/test/mockRestaurants.csv";
-        loadedSchedule = createScheduleFromCSV(new ArrayList<>(), scheduleCSV);
+        loadedSchedule = createScheduleFromCSV(scheduleCSV);
         homeController = new HomeController(apprenticeCSV, scheduleCSV, restaurantCSV);
 
 
