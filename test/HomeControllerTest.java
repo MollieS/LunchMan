@@ -2,6 +2,7 @@ import LunchManCore.FridayLunch;
 import controllers.HomeController;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import play.Application;
 import play.inject.guice.GuiceApplicationBuilder;
@@ -49,8 +50,6 @@ public class HomeControllerTest extends WithApplication{
         restaurantCSV = "/Users/molliestephenson/Java/LunchMan/test/mockRestaurants.csv";
         loadedSchedule = createScheduleFromCSV(scheduleCSV);
         homeController = new HomeController(apprenticeCSV, scheduleCSV, restaurantCSV);
-
-
     }
 
     @After
@@ -110,15 +109,20 @@ public class HomeControllerTest extends WithApplication{
 
     @Test
     public void canAddAnOrderToAFridayLunch() throws Exception {
+        Map restaurantForm = new HashMap<String, String>();
+        restaurantForm.put("restaurant", "2");
+        Result homePage = homeController.index();
+        Result postResult = invokeWithContext(Helpers.fakeRequest().bodyForm(restaurantForm),
+                () -> homeController.assignMenu());
         Map form = new HashMap<String, String>();
-        form.put("name", "Nick");
+        form.put("name", "1");
         form.put("order", "Peri Peri Chicken");
         Result result = homeController.index();
         assertTrue(contentAsString(result).contains("Please add your order:"));
-        Result postResult = invokeWithContext(Helpers.fakeRequest().bodyForm(form),
-                () -> homeController.assignMenu());
-        assertEquals(SEE_OTHER, postResult.status());
-        assertEquals("/", postResult.header("Location").get());
+        Result orderResult = invokeWithContext(Helpers.fakeRequest().bodyForm(form),
+                () -> homeController.newOrder());
+        assertEquals(SEE_OTHER, orderResult.status());
+        assertEquals("/", orderResult.header("Location").get());
         Result finalCheck = homeController.index();
         assertTrue(contentAsString(finalCheck).contains("Peri Peri Chicken"));
     }

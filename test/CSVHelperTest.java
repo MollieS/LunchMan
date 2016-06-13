@@ -1,10 +1,13 @@
 import LunchManCore.Apprentice;
+import LunchManCore.Employee;
 import LunchManCore.FridayLunch;
 import LunchManCore.Restaurant;
 import org.junit.Test;
 import services.CSVHelper;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 
@@ -54,4 +57,24 @@ public class CSVHelperTest {
        assertEquals("Rabea", result.get(2).getApprentice().get().getName());
        assertEquals("Priya", result.get(3).getApprentice().get().getName());
    }
+
+    @Test
+    public void createsEmployeesFromCSV() throws IOException {
+        String mockEmployees = "/Users/molliestephenson/Java/LunchMan/test/mockEmployees.csv";
+        List<Employee> employees = CSVHelper.createEmployeesFromCSV(mockEmployees);
+        assertEquals("Peter", employees.get(0).getName());
+        assertEquals("George", employees.get(1).getName());
+        assertEquals("Lisa", employees.get(2).getName());
+    }
+
+    @Test
+    public void updatesSavedCSVEmployees() throws Exception {
+        String mockEmployees = "/Users/molliestephenson/Java/LunchMan/test/mockEmployees.csv";
+        String mockWriteCSV = "/Users/molliestephenson/Java/LunchMan/test/mockWriteEmployees.csv";
+        List<Employee> loadedEmployees = CSVHelper.createEmployeesFromCSV(mockEmployees);
+        loadedEmployees.get(1).addOrder("Peri Peri Egg");
+        CSVHelper.saveEmployeesToCSV(loadedEmployees, mockWriteCSV);
+        List<Employee> result = CSVHelper.createEmployeesFromCSV(mockWriteCSV);
+        assertEquals("Peri Peri Egg", result.get(1).getOrder().get());
+    }
 }

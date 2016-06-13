@@ -1,14 +1,12 @@
 @import LunchManCore.FridayLunch
 @import LunchManCore.Restaurant
 
-@(message: String, lunches: List[FridayLunch], restaurants: List[Restaurant])
-@*
-* Call the `main` template with two arguments. The first
-* argument is a `String` with the title of the page, the second
-* argument is an `Html` object containing the body of the page.
-*@
+@import LunchManCore.Employee
+
+@(message: String, lunches: List[FridayLunch], restaurants: List[Restaurant], employees: List[Employee])
+
 @main(message) {
-    <h1>@message</h1>
+    <h1>@message&trade;</h1>
     @for((lunch, index) <- lunches.zipWithIndex) {
         @lunch.getDate
         <h2>@lunch.getApprentice.get().getName</h2>
@@ -34,6 +32,24 @@
     } else {
         @lunches.get(0).getRestaurant.get().getName
         <a href="@lunches.get(0).getRestaurant.get().getMenuLink">Menu</a>
+    }
+    </section>
+
+    <section id="ordersSection">
+    @if(lunches.get(0).getRestaurant.isPresent) {
+        Please add your order:
+        @for((employee, index) <- employees.zipWithIndex) {
+            @if(employee.getOrder.isPresent) {
+                @employee.getName @employee.getOrder.get()
+            } else {
+                <form id="orders" METHOD="post" action="/newOrder">
+                    <label type="text">@employee.getName</label>
+                    <input type="hidden" value="@index" name="name"/>
+                    <input type="text" placeholder="Order" name="order"/>
+                    <input type="submit"/>
+                </form>
+            }
+        }
     }
     </section>
 }

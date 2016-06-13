@@ -1,0 +1,9 @@
+#ordersSection {
+    float: right;
+    background-color: lightpink;
+}
+
+body {
+    margin: 30px;
+    font-family: Arial;
+}

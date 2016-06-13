@@ -6,6 +6,7 @@
 GET     /                           controllers.HomeController.index
 POST    /changeapprentice           controllers.HomeController.changeSchedule
 POST    /assignrestaurant           controllers.HomeController.assignMenu
+POST    /newOrder                   controllers.HomeController.newOrder
 # An example controller showing how to use dependency injection
 GET     /count                      controllers.CountController.count
 # An example controller showing how to write asynchronous code

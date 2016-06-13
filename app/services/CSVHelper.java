@@ -1,6 +1,7 @@
 package services;
 
 import LunchManCore.Apprentice;
+import LunchManCore.Employee;
 import LunchManCore.FridayLunch;
 import LunchManCore.Restaurant;
 import com.opencsv.CSVReader;
@@ -13,6 +14,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class CSVHelper {
 
@@ -40,6 +42,19 @@ public class CSVHelper {
         return apprentices;
     }
 
+    public static List<Employee> createEmployeesFromCSV(String csvFilename) throws IOException {
+        List<String[]> names = loadCSV(csvFilename);
+        List<Employee> employees = new ArrayList<>();
+        for (String[] name : names) {
+            Employee employee = new Employee(name[0]);
+            employees.add(employee);
+            if (name.length > 1) {
+                employee.addOrder(name[1]);
+            }
+        }
+        return employees;
+    }
+
     public static List<Restaurant> createRestaurantsFromCSV(String csvFilename) throws IOException {
         List<String[]> restaurantList = loadCSV(csvFilename);
         List<Restaurant> restaurants = new ArrayList<>();
@@ -52,14 +67,18 @@ public class CSVHelper {
     public static void saveRotaToCSV(List<FridayLunch> schedule, String csvFilename) throws Exception {
         CSVWriter csvWriter = new CSVWriter(new FileWriter(csvFilename));
         for (FridayLunch lunch : schedule) {
-            String[] record = new String[4];
-            record[0] =  lunch.getApprentice().get().getName();
-            record[1] = lunch.getDate().toString();
+            String record = "";
+            record += lunch.getApprentice().get().getName();
+            record += ",";
+            record += lunch.getDate();
             if (lunch.getRestaurant().isPresent()) {
-                record[2] = lunch.getRestaurant().get().getName();
-                record[3] = lunch.getRestaurant().get().getMenuLink();
+                record += ",";
+                record += lunch.getRestaurant().get().getName();
+                record += ",";
+                record += lunch.getRestaurant().get().getMenuLink();
             }
-            csvWriter.writeNext(record);
+            String[] recordArray = record.split(",");
+            csvWriter.writeNext(recordArray);
         }
         csvWriter.close();
     }
@@ -70,5 +89,20 @@ public class CSVHelper {
         List<String[]> result = csvReader.readAll();
         csvReader.close();
         return result;
+    }
+
+    public static void saveEmployeesToCSV(List<Employee> employees, String csvFilename) throws IOException {
+        CSVWriter csvWriter = new CSVWriter(new FileWriter(csvFilename));
+        for (Employee employee : employees) {
+            String record = "";
+            record += employee.getName();
+            if (employee.getOrder().isPresent()) {
+                record += ",";
+                record += employee.getOrder().get();
+            }
+            String[] recordArray = record.split(",");
+            csvWriter.writeNext(recordArray);
+        }
+        csvWriter.close();
     }
 }
