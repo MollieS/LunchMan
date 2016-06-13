@@ -108,4 +108,19 @@ public class HomeControllerTest extends WithApplication{
         assertTrue(contentAsString(finalCheck).contains("Deliveroo"));
     }
 
+    @Test
+    public void canAddAnOrderToAFridayLunch() throws Exception {
+        Map form = new HashMap<String, String>();
+        form.put("name", "Nick");
+        form.put("order", "Peri Peri Chicken");
+        Result result = homeController.index();
+        assertTrue(contentAsString(result).contains("Please add your order:"));
+        Result postResult = invokeWithContext(Helpers.fakeRequest().bodyForm(form),
+                () -> homeController.assignMenu());
+        assertEquals(SEE_OTHER, postResult.status());
+        assertEquals("/", postResult.header("Location").get());
+        Result finalCheck = homeController.index();
+        assertTrue(contentAsString(finalCheck).contains("Peri Peri Chicken"));
+    }
+
 }
