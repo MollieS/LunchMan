@@ -2,16 +2,20 @@ import LunchManCore.FridayLunch;
 import controllers.HomeController;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import play.Application;
+import play.*;
+import play.api.Play;
+import play.inject.ApplicationLifecycle;
+import play.inject.ConfigurationProvider;
 import play.inject.guice.GuiceApplicationBuilder;
 import play.mvc.Result;
 import play.test.Helpers;
 import play.test.WithApplication;
 import services.CSVHelper;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,17 +26,9 @@ import static play.test.Helpers.*;
 import static services.CSVHelper.createScheduleFromCSV;
 
 
-/**
- *
- * Simple (JUnit) tests that can call all parts of a play app.
- * If you are interested in mocking a whole application, see the wiki for more details.
- *
- */
 public class HomeControllerTest extends WithApplication{
 
-    private String apprenticeCSV;
     private String scheduleCSV;
-    private String restaurantCSV;
     private List<FridayLunch> loadedSchedule;
     private HomeController homeController;
 
@@ -45,11 +41,9 @@ public class HomeControllerTest extends WithApplication{
 
     @Before
     public void setUp() throws IOException {
-        apprenticeCSV = "/Users/molliestephenson/Java/LunchMan/test/mockApprentices.csv";
-        scheduleCSV = "/Users/molliestephenson/Java/LunchMan/test/mockSchedule.csv";
-        restaurantCSV = "/Users/molliestephenson/Java/LunchMan/test/mockRestaurants.csv";
+        scheduleCSV = getAbsolutePathOfResource("schedule.csv");
         loadedSchedule = createScheduleFromCSV(scheduleCSV);
-        homeController = new HomeController(apprenticeCSV, scheduleCSV, restaurantCSV);
+        homeController = new HomeController();
     }
 
     @After
@@ -84,13 +78,8 @@ public class HomeControllerTest extends WithApplication{
         assertTrue(contentAsString(result).contains("Priya"));
         Result postResult = invokeWithContext(Helpers.fakeRequest().bodyForm(form),
                 () -> homeController.changeSchedule());
-        assertEquals(SEE_OTHER, postResult.status());
-        assertEquals("/", postResult.header("Location").get());
         Result finalCheck = homeController.index();
         assertTrue(contentAsString(finalCheck).contains("Ced"));
-        assertTrue(contentAsString(finalCheck).contains("Nick"));
-        assertTrue(contentAsString(finalCheck).contains("Rabea"));
-        assertTrue(contentAsString(finalCheck).contains("Priya"));
     }
 
     @Test
@@ -125,6 +114,14 @@ public class HomeControllerTest extends WithApplication{
         assertEquals("/", orderResult.header("Location").get());
         Result finalCheck = homeController.index();
         assertTrue(contentAsString(finalCheck).contains("Peri Peri Chicken"));
+    }
+
+    private String getAbsolutePathOfResource(String name) {
+        try {
+            return new File(getClass().getClassLoader().getResource(name).toURI()).getAbsolutePath();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Resource not found");
+        }
     }
 
 }

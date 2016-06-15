@@ -2,21 +2,39 @@ import LunchManCore.Apprentice;
 import LunchManCore.Employee;
 import LunchManCore.FridayLunch;
 import LunchManCore.Restaurant;
+import org.junit.Before;
 import org.junit.Test;
 import services.CSVHelper;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 
 public class CSVHelperTest {
 
+    private String apprenticeCSV;
+    private String scheduleCSV;
+    private String scheduleWriteCSV;
+    private String restaurantCSV;
+    private String employeesCSV;
+    private String employeesWriteCSV;
+
+    @Before
+    public void setUp() {
+        apprenticeCSV = getAbsolutePathOfResource("apprentices.csv");
+        scheduleCSV = getAbsolutePathOfResource("schedule.csv");
+        restaurantCSV = getAbsolutePathOfResource("restaurants.csv");
+        employeesCSV = getAbsolutePathOfResource("employees.csv");
+        employeesWriteCSV = getAbsolutePathOfResource("mockWriteEmployees.csv");
+        scheduleWriteCSV = getAbsolutePathOfResource("mockWriteSchedule.csv");
+    }
+
     @Test
     public void createsApprenticesFromListOfNamesInCSV() throws Exception {
-        String mockApprenticesCSV = "/Users/molliestephenson/Java/LunchMan/test/mockApprentices.csv";
-        List<Apprentice> result = CSVHelper.createApprenticesFromCSV(mockApprenticesCSV);
+        List<Apprentice> result = CSVHelper.createApprenticesFromCSV(apprenticeCSV);
         assertEquals("Mollie", result.get(0).getName());
         assertEquals("Nick", result.get(1).getName());
         assertEquals("Ced", result.get(2).getName());
@@ -26,8 +44,7 @@ public class CSVHelperTest {
 
     @Test
     public void createsRotaFromCSV() throws Exception {
-        String mockSchedule = "/Users/molliestephenson/Java/LunchMan/test/mockSchedule.csv";
-        List<FridayLunch> result = CSVHelper.createScheduleFromCSV(mockSchedule);
+        List<FridayLunch> result = CSVHelper.createScheduleFromCSV(scheduleCSV);
         assertEquals("Mollie", result.get(0).getApprentice().get().getName());
         assertEquals("Nick", result.get(1).getApprentice().get().getName());
         assertEquals("Rabea", result.get(2).getApprentice().get().getName());
@@ -36,8 +53,7 @@ public class CSVHelperTest {
 
     @Test
     public void createsRestaurantsFromCSV() throws Exception {
-        String mockRestaurants = "/Users/molliestephenson/Java/LunchMan/test/mockRestaurants.csv";
-        List<Restaurant> result = CSVHelper.createRestaurantsFromCSV(mockRestaurants);
+        List<Restaurant> result = CSVHelper.createRestaurantsFromCSV(restaurantCSV);
         assertEquals("Bahn Mi Bay", result.get(0).getName());
         assertEquals("Chillango", result.get(1).getName());
         assertEquals("Deliveroo", result.get(2).getName());
@@ -45,13 +61,11 @@ public class CSVHelperTest {
 
    @Test
    public void updatesSavedCSVSchedule() throws Exception {
-       String mockSchedule = "/Users/molliestephenson/Java/LunchMan/test/mockSchedule.csv";
-       String mockWriteCSV = "/Users/molliestephenson/Java/LunchMan/test/mockWriteCSV.csv";
-       List<FridayLunch> loadedSchedule = CSVHelper.createScheduleFromCSV(mockSchedule);
+       List<FridayLunch> loadedSchedule = CSVHelper.createScheduleFromCSV(scheduleCSV);
        Apprentice rabea = new Apprentice("Rabea");
        loadedSchedule.get(1).assignApprentice(rabea);
-       CSVHelper.saveRotaToCSV(loadedSchedule, mockWriteCSV);
-       List<FridayLunch> result = CSVHelper.createScheduleFromCSV(mockWriteCSV);
+       CSVHelper.saveRotaToCSV(loadedSchedule, scheduleWriteCSV);
+       List<FridayLunch> result = CSVHelper.createScheduleFromCSV(scheduleWriteCSV);
        assertEquals("Mollie", result.get(0).getApprentice().get().getName());
        assertEquals("Rabea", result.get(1).getApprentice().get().getName());
        assertEquals("Rabea", result.get(2).getApprentice().get().getName());
@@ -60,8 +74,7 @@ public class CSVHelperTest {
 
     @Test
     public void createsEmployeesFromCSV() throws IOException {
-        String mockEmployees = "/Users/molliestephenson/Java/LunchMan/test/mockEmployees.csv";
-        List<Employee> employees = CSVHelper.createEmployeesFromCSV(mockEmployees);
+        List<Employee> employees = CSVHelper.createEmployeesFromCSV(employeesCSV);
         assertEquals("Peter", employees.get(0).getName());
         assertEquals("George", employees.get(1).getName());
         assertEquals("Lisa", employees.get(2).getName());
@@ -69,12 +82,18 @@ public class CSVHelperTest {
 
     @Test
     public void updatesSavedCSVEmployees() throws Exception {
-        String mockEmployees = "/Users/molliestephenson/Java/LunchMan/test/mockEmployees.csv";
-        String mockWriteCSV = "/Users/molliestephenson/Java/LunchMan/test/mockWriteEmployees.csv";
-        List<Employee> loadedEmployees = CSVHelper.createEmployeesFromCSV(mockEmployees);
+        List<Employee> loadedEmployees = CSVHelper.createEmployeesFromCSV(employeesCSV);
         loadedEmployees.get(1).addOrder("Peri Peri Egg");
-        CSVHelper.saveEmployeesToCSV(loadedEmployees, mockWriteCSV);
-        List<Employee> result = CSVHelper.createEmployeesFromCSV(mockWriteCSV);
+        CSVHelper.saveEmployeesToCSV(loadedEmployees, employeesWriteCSV);
+        List<Employee> result = CSVHelper.createEmployeesFromCSV(employeesWriteCSV);
         assertEquals("Peri Peri Egg", result.get(1).getOrder().get());
+    }
+
+    private String getAbsolutePathOfResource(String name) {
+        try {
+            return new File(getClass().getClassLoader().getResource(name).toURI()).getAbsolutePath();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Resource not found");
+        }
     }
 }

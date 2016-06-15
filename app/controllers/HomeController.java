@@ -1,38 +1,51 @@
 package controllers;
 
 import LunchManCore.*;
+import play.Configuration;
+import play.Environment;
+import play.Mode;
+import play.inject.ConfigurationProvider;
 import play.mvc.*;
+import play.*;
 
 import services.CSVHelper;
 import views.html.*;
 
+import javax.inject.Inject;
+import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static play.Mode.DEV;
 import static services.CSVHelper.createScheduleFromCSV;
 
-/**
- * This controller contains an action to handle HTTP requests
- * to the application's home page.
- */
 public class HomeController extends Controller {
 
-    private String apprenticeCSV = "/Users/molliestephenson/Java/LunchMan/csvs/apprentices.csv";
-    private String scheduleCSV = "/Users/molliestephenson/Java/LunchMan/csvs/schedule.csv";
-    private String restaurantCSV = "/Users/molliestephenson/Java/LunchMan/csvs/restaurants.csv";
-    private String employeesCSV = "/Users/molliestephenson/Java/LunchMan/csvs/employees.csv";
+
+    private String apprenticeCSV;
+    private String scheduleCSV;
+    private String restaurantCSV;
+    private String employeesCSV;
 
     private Rota rota = new Rota(4, LocalDate.now());
 
-    public HomeController() {}
+    public HomeController() {
+        apprenticeCSV = getAbsolutePathOfResource("apprentices.csv");
+        scheduleCSV = getAbsolutePathOfResource("schedule.csv");
+        restaurantCSV = getAbsolutePathOfResource("restaurants.csv");
+        employeesCSV = getAbsolutePathOfResource("employees.csv");
+    }
 
-    public HomeController(String apprenticeCSV, String scheduleCSV, String restaurantCSV) {
-        this.apprenticeCSV = apprenticeCSV;
-        this.scheduleCSV = scheduleCSV;
-        this.restaurantCSV = restaurantCSV;
+    private String getAbsolutePathOfResource(String name) {
+        try {
+        return new File(getClass().getClassLoader().getResource(name).toURI()).getAbsolutePath();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Resource not found");
+        }
     }
 
     public Result index() {
