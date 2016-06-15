@@ -41,7 +41,7 @@ public class HomeControllerTest extends WithApplication{
 
     @Before
     public void setUp() throws IOException {
-        scheduleCSV = getAbsolutePathOfResource("schedule.csv");
+        scheduleCSV = new CSVHelper().getAbsolutePathOfResource("schedule.csv");
         loadedSchedule = createScheduleFromCSV(scheduleCSV);
         homeController = new HomeController();
     }
@@ -114,14 +114,6 @@ public class HomeControllerTest extends WithApplication{
         assertEquals("/", orderResult.header("Location").get());
         Result finalCheck = homeController.index();
         assertTrue(contentAsString(finalCheck).contains("Peri Peri Chicken"));
-    }
-
-    private String getAbsolutePathOfResource(String name) {
-        try {
-            return new File(getClass().getClassLoader().getResource(name).toURI()).getAbsolutePath();
-        } catch (URISyntaxException e) {
-            throw new RuntimeException("Resource not found");
-        }
     }
 
 }

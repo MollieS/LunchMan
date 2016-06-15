@@ -24,12 +24,12 @@ public class CSVHelperTest {
 
     @Before
     public void setUp() {
-        apprenticeCSV = getAbsolutePathOfResource("apprentices.csv");
-        scheduleCSV = getAbsolutePathOfResource("schedule.csv");
-        restaurantCSV = getAbsolutePathOfResource("restaurants.csv");
-        employeesCSV = getAbsolutePathOfResource("employees.csv");
-        employeesWriteCSV = getAbsolutePathOfResource("mockWriteEmployees.csv");
-        scheduleWriteCSV = getAbsolutePathOfResource("mockWriteSchedule.csv");
+        apprenticeCSV = new CSVHelper().getAbsolutePathOfResource("apprentices.csv");
+        scheduleCSV = new CSVHelper().getAbsolutePathOfResource("schedule.csv");
+        restaurantCSV = new CSVHelper().getAbsolutePathOfResource("restaurants.csv");
+        employeesCSV = new CSVHelper().getAbsolutePathOfResource("employees.csv");
+        employeesWriteCSV = new CSVHelper().getAbsolutePathOfResource("mockWriteEmployees.csv");
+        scheduleWriteCSV = new CSVHelper().getAbsolutePathOfResource("mockWriteSchedule.csv");
     }
 
     @Test
@@ -89,11 +89,4 @@ public class CSVHelperTest {
         assertEquals("Peri Peri Egg", result.get(1).getOrder().get());
     }
 
-    private String getAbsolutePathOfResource(String name) {
-        try {
-            return new File(getClass().getClassLoader().getResource(name).toURI()).getAbsolutePath();
-        } catch (URISyntaxException e) {
-            throw new RuntimeException("Resource not found");
-        }
-    }
 }

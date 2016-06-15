@@ -1,26 +1,22 @@
 package controllers;
 
 import LunchManCore.*;
-import play.Configuration;
-import play.Environment;
-import play.Mode;
-import play.inject.ConfigurationProvider;
+import com.google.inject.Inject;
 import play.mvc.*;
-import play.*;
 
 import services.CSVHelper;
 import views.html.*;
 
-import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static play.Mode.DEV;
 import static services.CSVHelper.createScheduleFromCSV;
 
 public class HomeController extends Controller {
@@ -34,18 +30,10 @@ public class HomeController extends Controller {
     private Rota rota = new Rota(4, LocalDate.now());
 
     public HomeController() {
-        apprenticeCSV = getAbsolutePathOfResource("apprentices.csv");
-        scheduleCSV = getAbsolutePathOfResource("schedule.csv");
-        restaurantCSV = getAbsolutePathOfResource("restaurants.csv");
-        employeesCSV = getAbsolutePathOfResource("employees.csv");
-    }
-
-    private String getAbsolutePathOfResource(String name) {
-        try {
-        return new File(getClass().getClassLoader().getResource(name).toURI()).getAbsolutePath();
-        } catch (URISyntaxException e) {
-            throw new RuntimeException("Resource not found");
-        }
+        apprenticeCSV = new CSVHelper().getAbsolutePathOfResource("apprentices.csv");
+        scheduleCSV = new CSVHelper().getAbsolutePathOfResource("schedule.csv");
+        restaurantCSV = new CSVHelper().getAbsolutePathOfResource("restaurants.csv");
+        employeesCSV = new CSVHelper().getAbsolutePathOfResource("employees.csv");
     }
 
     public Result index() {

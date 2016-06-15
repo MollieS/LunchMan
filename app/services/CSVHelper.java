@@ -6,16 +6,17 @@ import LunchManCore.FridayLunch;
 import LunchManCore.Restaurant;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
+import controllers.HomeController;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class CSVHelper {
 
@@ -105,5 +106,13 @@ public class CSVHelper {
             csvWriter.writeNext(recordArray);
         }
         csvWriter.close();
+    }
+
+    public String getAbsolutePathOfResource(String name) {
+        try {
+            return new File(getClass().getClassLoader().getResource("resources/" + name).toURI()).getAbsolutePath();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Resource not found");
+        }
     }
 }
