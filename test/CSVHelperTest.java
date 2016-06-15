@@ -6,9 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import services.CSVHelper;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -37,9 +35,6 @@ public class CSVHelperTest {
         List<Apprentice> result = CSVHelper.createApprenticesFromCSV(apprenticeCSV);
         assertEquals("Mollie", result.get(0).getName());
         assertEquals("Nick", result.get(1).getName());
-        assertEquals("Ced", result.get(2).getName());
-        assertEquals("Priya", result.get(3).getName());
-        assertEquals("Rabea", result.get(4).getName());
     }
 
     @Test
@@ -47,8 +42,6 @@ public class CSVHelperTest {
         List<FridayLunch> result = CSVHelper.createScheduleFromCSV(scheduleCSV);
         assertEquals("Mollie", result.get(0).getApprentice().get().getName());
         assertEquals("Nick", result.get(1).getApprentice().get().getName());
-        assertEquals("Rabea", result.get(2).getApprentice().get().getName());
-        assertEquals("Priya", result.get(3).getApprentice().get().getName());
     }
 
     @Test
@@ -56,7 +49,6 @@ public class CSVHelperTest {
         List<Restaurant> result = CSVHelper.createRestaurantsFromCSV(restaurantCSV);
         assertEquals("Bahn Mi Bay", result.get(0).getName());
         assertEquals("Chillango", result.get(1).getName());
-        assertEquals("Deliveroo", result.get(2).getName());
     }
 
    @Test
@@ -66,18 +58,13 @@ public class CSVHelperTest {
        loadedSchedule.get(1).assignApprentice(rabea);
        CSVHelper.saveRotaToCSV(loadedSchedule, scheduleWriteCSV);
        List<FridayLunch> result = CSVHelper.createScheduleFromCSV(scheduleWriteCSV);
-       assertEquals("Mollie", result.get(0).getApprentice().get().getName());
        assertEquals("Rabea", result.get(1).getApprentice().get().getName());
-       assertEquals("Rabea", result.get(2).getApprentice().get().getName());
-       assertEquals("Priya", result.get(3).getApprentice().get().getName());
    }
 
     @Test
     public void createsEmployeesFromCSV() throws IOException {
         List<Employee> employees = CSVHelper.createEmployeesFromCSV(employeesCSV);
         assertEquals("Peter", employees.get(0).getName());
-        assertEquals("George", employees.get(1).getName());
-        assertEquals("Lisa", employees.get(2).getName());
     }
 
     @Test

@@ -8,12 +8,10 @@ import views.html.*;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import static services.CSVHelper.*;
-import static services.CSVHelper.createScheduleFromCSV;
 
 public class HomeController extends Controller {
 
@@ -22,7 +20,6 @@ public class HomeController extends Controller {
     private String scheduleCSV;
     private String restaurantCSV;
     private String employeesCSV;
-    private Rota rota;
 
     public HomeController() {
         apprenticeCSV = new CSVHelper().getAbsolutePathOfResource("apprentices.csv");
@@ -32,38 +29,70 @@ public class HomeController extends Controller {
     }
 
     public Result index() {
-        rota = new Rota(4, LocalDate.now());
-        rota.updateSchedule(getSchedule(), getApprentices());
-        saveRotaToCSV(rota.getSchedule(), scheduleCSV);
-
+        Rota rota = getCurrentSchedule();
         return ok(index.render("LunchMan", rota.getSchedule(), getRestaurants(), getEmployees()));
     }
 
-    public Result changeSchedule() throws Exception {
+    public Result changeSchedule() {
         Map<String, String[]> request = request().body().asFormUrlEncoded();
-        List<FridayLunch> schedule = rota.getSchedule();
-        FridayLunch fridayLunch = schedule.get(Integer.valueOf(request.get("position")[0]));
-        fridayLunch.assignApprentice(new Apprentice(request.get("newName")[0]));
-        saveRotaToCSV(rota.getSchedule(), scheduleCSV);
+        Integer friday = Integer.valueOf(request.get("position")[0]);
+        String newName = request.get("newName")[0];
+
+        assignApprenticeToLunch(friday, newName);
+
         return redirect("/");
     }
 
-    public Result assignMenu() throws Exception {
+    public Result assignMenu() {
         Map<String, String[]> request = request().body().asFormUrlEncoded();
-        List<Restaurant> restaurants = createRestaurantsFromCSV(restaurantCSV);
-        List<FridayLunch> schedule = rota.getSchedule();
-        FridayLunch fridayLunch = schedule.get(0);
-        fridayLunch.assignRestaurant(restaurants.get(Integer.valueOf(request.get("restaurant")[0])));
-        saveRotaToCSV(rota.getSchedule(), scheduleCSV);
+        Integer restaurant = Integer.valueOf(request.get("restaurant")[0]);
+
+        chooseNextFridayMenu(restaurant);
+
         return redirect("/");
     }
 
-    public Result newOrder() throws IOException {
+
+    public Result newOrder() {
         Map<String, String[]> request = request().body().asFormUrlEncoded();
+        Integer employee = Integer.valueOf(request.get("name")[0]);
+        String order = request.get("order")[0];
+
+        placeOrder(employee, order);
+        return redirect("/");
+    }
+
+    private void placeOrder(Integer employee, String order) {
         List<Employee> employees = getEmployees();
-        employees.get(Integer.valueOf(request.get("name")[0])).addOrder(request.get("order")[0]);
+        employees.get(employee).addOrder(order);
+        saveEmployees(employees);
+    }
+
+    private void chooseNextFridayMenu(Integer restaurant) {
+        List<Restaurant> restaurants = getRestaurants();
+        Rota rota = getCurrentSchedule();
+        FridayLunch fridayLunch = rota.getSchedule().get(0);
+        fridayLunch.assignRestaurant(restaurants.get(restaurant));
+        saveSchedule(rota);
+    }
+
+    private Rota getCurrentSchedule() {
+        Rota rota = new Rota(4, LocalDate.now());
+        rota.updateSchedule(getSchedule(), getApprentices());
+        saveSchedule(rota);
+        return rota;
+    }
+
+    private void assignApprenticeToLunch(Integer schedulePosition, String newName) {
+        Rota rota = getCurrentSchedule();
+        FridayLunch fridayLunch = rota.getSchedule().get(schedulePosition);
+        fridayLunch.assignApprentice(new Apprentice(newName));
+        saveSchedule(rota);
+    }
+
+
+    private void saveEmployees(List<Employee> employees) {
         saveEmployeesToCSV(employees, employeesCSV);
-        return redirect("/");
     }
 
     private List<FridayLunch> getSchedule() {
@@ -80,6 +109,10 @@ public class HomeController extends Controller {
 
     private List<Restaurant> getRestaurants() {
         return createRestaurantsFromCSV(restaurantCSV);
+    }
+
+    private void saveSchedule(Rota rota) {
+        saveRotaToCSV(rota.getSchedule(), scheduleCSV);
     }
 
 }

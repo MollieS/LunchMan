@@ -54,16 +54,29 @@ public class HomeControllerTest extends WithApplication{
     @Test
     public void indexPage() {
         Result result = homeController.index();
-        assertTrue(contentAsString(result).contains("LunchMan"));
+        assertEquals(OK, result.status());
     }
 
     @Test
     public void indexPageShowsApprenticeNames() {
         Result result = homeController.index();
+        assertTrue(contentAsString(result).contains("LunchMan"));
         assertTrue(contentAsString(result).contains("Priya"));
         assertTrue(contentAsString(result).contains("Mollie"));
         assertTrue(contentAsString(result).contains("Nick"));
         assertTrue(contentAsString(result).contains("Rabea"));
+    }
+
+    @Test
+    public void changeApprenticeRedirectsToIndex() throws Exception {
+        Map form = new HashMap<String, String>();
+        form.put("position", "0");
+        form.put("newName", "Ced");
+
+        Result postResult = invokeWithContext(Helpers.fakeRequest().bodyForm(form), () -> homeController.changeSchedule());
+
+        assertEquals(SEE_OTHER, postResult.status());
+        assertEquals("/", postResult.header("Location").get());
     }
 
     @Test
@@ -71,49 +84,85 @@ public class HomeControllerTest extends WithApplication{
         Map form = new HashMap<String, String>();
         form.put("position", "0");
         form.put("newName", "Ced");
+
+       invokeWithContext(Helpers.fakeRequest().bodyForm(form), () -> homeController.changeSchedule());
+
         Result result = homeController.index();
-        assertTrue(contentAsString(result).contains("Mollie"));
-        assertTrue(contentAsString(result).contains("Nick"));
-        assertTrue(contentAsString(result).contains("Rabea"));
-        assertTrue(contentAsString(result).contains("Priya"));
+        assertTrue(contentAsString(result).contains("Ced"));
+    }
+
+    @Test
+    public void asksForMenuChoice() throws Exception {
+        Result result = homeController.index();
+        assertTrue(contentAsString(result).contains("Please choose a menu:"));
+    }
+
+    @Test
+    public void assignMenuRedirectsToIndex() throws Exception {
+        Map form = new HashMap<String, String>();
+        form.put("restaurant", "2");
+
         Result postResult = invokeWithContext(Helpers.fakeRequest().bodyForm(form),
-                () -> homeController.changeSchedule());
-        Result finalCheck = homeController.index();
-        assertTrue(contentAsString(finalCheck).contains("Ced"));
+                () -> homeController.assignMenu());
+
+        assertEquals(SEE_OTHER, postResult.status());
+        assertEquals("/", postResult.header("Location").get());
     }
 
     @Test
     public void canAssignAMenuToAFridayLunch() throws Exception {
         Map form = new HashMap<String, String>();
         form.put("restaurant", "2");
-        Result result = homeController.index();
-        assertTrue(contentAsString(result).contains("Please choose a menu:"));
-        Result postResult = invokeWithContext(Helpers.fakeRequest().bodyForm(form),
+
+        invokeWithContext(Helpers.fakeRequest().bodyForm(form),
                 () -> homeController.assignMenu());
-        assertEquals(SEE_OTHER, postResult.status());
-        assertEquals("/", postResult.header("Location").get());
-        Result finalCheck = homeController.index();
-        assertTrue(contentAsString(finalCheck).contains("Deliveroo"));
+
+        Result result = homeController.index();
+        assertTrue(contentAsString(result).contains("Deliveroo"));
     }
 
     @Test
-    public void canAddAnOrderToAFridayLunch() throws Exception {
-        Map restaurantForm = new HashMap<String, String>();
-        restaurantForm.put("restaurant", "2");
-        Result homePage = homeController.index();
-        Result postResult = invokeWithContext(Helpers.fakeRequest().bodyForm(restaurantForm),
-                () -> homeController.assignMenu());
+    public void asksForOrderChoice() throws Exception {
+        chooseMenu();
+
+        Result result = homeController.index();
+
+        assertTrue(contentAsString(result).contains("Please add your order:"));
+    }
+
+    @Test
+    public void addingOrderRedirectsToIndex() throws Exception {
+        chooseMenu();
         Map form = new HashMap<String, String>();
         form.put("name", "1");
         form.put("order", "Peri Peri Chicken");
-        Result result = homeController.index();
-        assertTrue(contentAsString(result).contains("Please add your order:"));
+
         Result orderResult = invokeWithContext(Helpers.fakeRequest().bodyForm(form),
                 () -> homeController.newOrder());
+
         assertEquals(SEE_OTHER, orderResult.status());
         assertEquals("/", orderResult.header("Location").get());
-        Result finalCheck = homeController.index();
-        assertTrue(contentAsString(finalCheck).contains("Peri Peri Chicken"));
     }
 
+
+    @Test
+    public void canAddAnOrderToAFridayLunch() throws Exception {
+        chooseMenu();
+        Map form = new HashMap<String, String>();
+        form.put("name", "1");
+        form.put("order", "Peri Peri Chicken");
+
+        invokeWithContext(Helpers.fakeRequest().bodyForm(form),
+                () -> homeController.newOrder());
+
+        Result result = homeController.index();
+        assertTrue(contentAsString(result).contains("Peri Peri Chicken"));
+    }
+
+    private void chooseMenu() {
+        Map restaurantForm = new HashMap<String, String>();
+        restaurantForm.put("restaurant", "2");
+        invokeWithContext(Helpers.fakeRequest().bodyForm(restaurantForm),
+                () -> homeController.assignMenu());
+    }
 }
