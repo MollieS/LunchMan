@@ -164,6 +164,7 @@ public class HomeControllerTest extends WithApplication{
 
     @Test
     public void addingGuestRedirectsToIndex() throws Exception {
+        chooseMenu();
         Map form = new HashMap<String, String>();
         form.put("name", "Gary");
         form.put("order", "Peri Peri Chicken");
@@ -178,6 +179,7 @@ public class HomeControllerTest extends WithApplication{
 
     @Test
     public void canAddAGuest() throws Exception {
+        chooseMenu();
         Map form = new HashMap<String, String>();
         form.put("name", "Gary");
         form.put("order", "Tuna Melt");

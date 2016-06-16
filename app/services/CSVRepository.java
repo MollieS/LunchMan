@@ -19,12 +19,12 @@ public class CSVRepository implements Storage {
     private String employeesCSV;
     private String guestsCSV;
 
-    public CSVRepository(String apprenticeCSV, String restaurantCSV, String scheduleCSV, String employeesCSV, String guestCSV) {
+    public CSVRepository(String apprenticeCSV, String restaurantCSV, String scheduleCSV, String employeesCSV, String guestsCSV) {
         this.apprenticeCSV = getAbsolutePathOfResource(apprenticeCSV);
         this.scheduleCSV = getAbsolutePathOfResource(scheduleCSV);
         this.restaurantCSV = getAbsolutePathOfResource(restaurantCSV);
         this.employeesCSV = getAbsolutePathOfResource(employeesCSV);
-        this.guestsCSV = getAbsolutePathOfResource(guestCSV);
+        this.guestsCSV = getAbsolutePathOfResource(guestsCSV);
     }
 
     public List<Apprentice> getApprentices() {
@@ -146,6 +146,7 @@ public class CSVRepository implements Storage {
     }
 
     private static List<String[]> loadCSV(String csvPath) {
+        System.out.println("Loading CSV from: " + csvPath);
         List<String[]> result;
         try {
             CSVReader csvReader = new CSVReader(new FileReader(csvPath));
