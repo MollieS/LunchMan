@@ -1,4 +1,5 @@
 import LunchManCore.FridayLunch;
+import LunchManCore.Storage;
 import controllers.HomeController;
 import org.junit.After;
 import org.junit.Before;
@@ -9,7 +10,6 @@ import play.mvc.Result;
 import play.test.Helpers;
 import play.test.WithApplication;
 import services.CSVRepository;
-import services.Storage;
 
 import java.io.IOException;
 import java.util.HashMap;

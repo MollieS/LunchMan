@@ -1,12 +1,8 @@
-import LunchManCore.Apprentice;
-import LunchManCore.Employee;
-import LunchManCore.FridayLunch;
-import LunchManCore.Restaurant;
+import LunchManCore.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import services.CSVRepository;
-import services.Storage;
 
 import java.io.IOException;
 import java.util.List;
