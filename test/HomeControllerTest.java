@@ -1,21 +1,23 @@
+import LunchManCore.FridayLunch;
+import controllers.HomeController;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import play.Application;
+import play.inject.guice.GuiceApplicationBuilder;
+import play.mvc.Result;
+import play.test.Helpers;
+import play.test.WithApplication;
+import services.CSVHelper;
+
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import LunchManCore.FridayLunch;
-import controllers.HomeController;
-import org.junit.*;
-
-import play.Application;
-import play.inject.guice.GuiceApplicationBuilder;
-import play.mvc.*;
-import play.test.*;
-import services.CSVHelper;
-
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static play.test.Helpers.*;
-import static org.junit.Assert.*;
 import static services.CSVHelper.createScheduleFromCSV;
 
 
@@ -29,7 +31,9 @@ public class HomeControllerTest extends WithApplication{
 
     private String apprenticeCSV;
     private String scheduleCSV;
+    private String restaurantCSV;
     private List<FridayLunch> loadedSchedule;
+    private HomeController homeController;
 
     @Override
     protected Application provideApplication() {
@@ -42,7 +46,10 @@ public class HomeControllerTest extends WithApplication{
     public void setUp() throws IOException {
         apprenticeCSV = "/Users/molliestephenson/Java/LunchMan/test/mockApprentices.csv";
         scheduleCSV = "/Users/molliestephenson/Java/LunchMan/test/mockSchedule.csv";
-        loadedSchedule = createScheduleFromCSV(new ArrayList<>(), scheduleCSV);
+        restaurantCSV = "/Users/molliestephenson/Java/LunchMan/test/mockRestaurants.csv";
+        loadedSchedule = createScheduleFromCSV(scheduleCSV);
+        homeController = new HomeController(apprenticeCSV, scheduleCSV, restaurantCSV);
+
 
     }
 
@@ -53,14 +60,12 @@ public class HomeControllerTest extends WithApplication{
 
     @Test
     public void indexPage() {
-        HomeController homeController = new HomeController(apprenticeCSV, scheduleCSV);
         Result result = homeController.index();
         assertTrue(contentAsString(result).contains("LunchMan"));
     }
 
     @Test
     public void indexPageShowsApprenticeNames() {
-        HomeController homeController = new HomeController(apprenticeCSV, scheduleCSV);
         Result result = homeController.index();
         assertTrue(contentAsString(result).contains("Priya"));
         assertTrue(contentAsString(result).contains("Mollie"));
@@ -73,7 +78,6 @@ public class HomeControllerTest extends WithApplication{
         Map form = new HashMap<String, String>();
         form.put("position", "0");
         form.put("newName", "Ced");
-        HomeController homeController = new HomeController(apprenticeCSV, scheduleCSV);
         Result result = homeController.index();
         assertTrue(contentAsString(result).contains("Mollie"));
         assertTrue(contentAsString(result).contains("Nick"));
@@ -88,6 +92,20 @@ public class HomeControllerTest extends WithApplication{
         assertTrue(contentAsString(finalCheck).contains("Nick"));
         assertTrue(contentAsString(finalCheck).contains("Rabea"));
         assertTrue(contentAsString(finalCheck).contains("Priya"));
+    }
+
+    @Test
+    public void canAssignAMenuToAFridayLunch() throws Exception {
+        Map form = new HashMap<String, String>();
+        form.put("restaurant", "2");
+        Result result = homeController.index();
+        assertTrue(contentAsString(result).contains("Please choose a menu:"));
+        Result postResult = invokeWithContext(Helpers.fakeRequest().bodyForm(form),
+                () -> homeController.assignMenu());
+        assertEquals(SEE_OTHER, postResult.status());
+        assertEquals("/", postResult.header("Location").get());
+        Result finalCheck = homeController.index();
+        assertTrue(contentAsString(finalCheck).contains("Deliveroo"));
     }
 
 }
