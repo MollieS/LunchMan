@@ -16,7 +16,7 @@ public class HomeController extends Controller {
 
     public Result index() {
         Rota rota = core.getCurrentSchedule();
-        return ok(index.render("LunchMan", rota.getSchedule(), csv.getRestaurants(), csv.getEmployees()));
+        return ok(index.render("LunchMan", rota.getSchedule(), core.getRestaurants(), core.getEmployees()));
     }
 
     public Result changeSchedule() {
