@@ -1,9 +1,6 @@
 package services;
 
-import LunchManCore.Apprentice;
-import LunchManCore.Employee;
-import LunchManCore.FridayLunch;
-import LunchManCore.Restaurant;
+import LunchManCore.*;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 
@@ -14,10 +11,53 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CSVHelper {
+public class CSVRepository implements Storage {
 
-    public static List<FridayLunch> createScheduleFromCSV(String csvFilename) {
-        List<String[]> fridayLunches = loadCSV(csvFilename);
+    private String apprenticeCSV;
+    private String scheduleCSV;
+    private String restaurantCSV;
+    private String employeesCSV;
+
+    public CSVRepository(String apprenticeCSV, String restaurantCSV, String scheduleCSV, String employeesCSV) {
+        this.apprenticeCSV = getAbsolutePathOfResource(apprenticeCSV);
+        this.scheduleCSV = getAbsolutePathOfResource(scheduleCSV);
+        this.restaurantCSV = getAbsolutePathOfResource(restaurantCSV);
+        this.employeesCSV = getAbsolutePathOfResource(employeesCSV);
+    }
+
+    public List<Apprentice> getApprentices() {
+        List<String[]> names = loadCSV(apprenticeCSV);
+        List<Apprentice> apprentices = new ArrayList<>();
+        for (String[] name : names) {
+            apprentices.add(new Apprentice(name[0]));
+        }
+        return apprentices;
+    }
+
+    public List<Employee> getEmployees() {
+        List<String[]> names = loadCSV(employeesCSV);
+        List<Employee> employees = new ArrayList<>();
+        for (String[] name : names) {
+            Employee employee = new Employee(name[0]);
+            employees.add(employee);
+            if (name.length > 1) {
+                employee.addOrder(name[1]);
+            }
+        }
+        return employees;
+    }
+
+    public List<Restaurant> getRestaurants() {
+        List<String[]> restaurantList = loadCSV(restaurantCSV);
+        List<Restaurant> restaurants = new ArrayList<>();
+        for (String[] restaurant : restaurantList) {
+            restaurants.add(new Restaurant(restaurant[0], restaurant[1]));
+        }
+        return restaurants;
+    }
+
+    public List<FridayLunch> getSchedule() {
+        List<String[]> fridayLunches = loadCSV(scheduleCSV);
         List<FridayLunch> lunches = new ArrayList<>();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         for (String[] lunch : fridayLunches) {
@@ -31,42 +71,11 @@ public class CSVHelper {
         return lunches;
     }
 
-    public static List<Apprentice> createApprenticesFromCSV(String csvFilename) {
-        List<String[]> names = loadCSV(csvFilename);
-        List<Apprentice> apprentices = new ArrayList<>();
-        for (String[] name : names) {
-            apprentices.add(new Apprentice(name[0]));
-        }
-        return apprentices;
-    }
-
-    public static List<Employee> createEmployeesFromCSV(String csvFilename) {
-        List<String[]> names = loadCSV(csvFilename);
-        List<Employee> employees = new ArrayList<>();
-        for (String[] name : names) {
-            Employee employee = new Employee(name[0]);
-            employees.add(employee);
-            if (name.length > 1) {
-                employee.addOrder(name[1]);
-            }
-        }
-        return employees;
-    }
-
-    public static List<Restaurant> createRestaurantsFromCSV(String csvFilename) {
-        List<String[]> restaurantList = loadCSV(csvFilename);
-        List<Restaurant> restaurants = new ArrayList<>();
-        for (String[] restaurant : restaurantList) {
-            restaurants.add(new Restaurant(restaurant[0], restaurant[1]));
-        }
-        return restaurants;
-    }
-
-    public static void saveRotaToCSV(List<FridayLunch> schedule, String csvFilename) {
+    public void saveSchedule(List<FridayLunch> lunches) {
         CSVWriter csvWriter = null;
         try {
-            csvWriter = new CSVWriter(new FileWriter(csvFilename));
-            for (FridayLunch lunch : schedule) {
+            csvWriter = new CSVWriter(new FileWriter(scheduleCSV));
+            for (FridayLunch lunch : lunches) {
                 String record = "";
                 record += lunch.getApprentice().get().getName();
                 record += ",";
@@ -86,23 +95,10 @@ public class CSVHelper {
         }
     }
 
-
-    private static List<String[]> loadCSV(String csvPath) {
-        List<String[]> result;
-        try {
-            CSVReader csvReader = new CSVReader(new FileReader(csvPath));
-            result = csvReader.readAll();
-            csvReader.close();
-        } catch (IOException e) {
-            throw new RuntimeException("Cannot load CSV");
-        }
-        return result;
-    }
-
-    public static void saveEmployeesToCSV(List<Employee> employees, String csvFilename) {
+    public void saveEmployees(List<Employee> employees) {
         CSVWriter csvWriter = null;
         try {
-            csvWriter = new CSVWriter(new FileWriter(csvFilename));
+            csvWriter = new CSVWriter(new FileWriter(employeesCSV));
             for (Employee employee : employees) {
                 String record = "";
                 record += employee.getName();
@@ -119,7 +115,19 @@ public class CSVHelper {
         }
     }
 
-    public String getAbsolutePathOfResource(String name) {
+    private static List<String[]> loadCSV(String csvPath) {
+        List<String[]> result;
+        try {
+            CSVReader csvReader = new CSVReader(new FileReader(csvPath));
+            result = csvReader.readAll();
+            csvReader.close();
+        } catch (IOException e) {
+            throw new RuntimeException("Cannot load CSV");
+        }
+        return result;
+    }
+
+    private String getAbsolutePathOfResource(String name) {
         try {
             return new File(getClass().getClassLoader().getResource("resources/" + name).toURI()).getAbsolutePath();
         } catch (URISyntaxException e) {

@@ -4,18 +4,14 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import play.*;
-import play.api.Play;
-import play.inject.ApplicationLifecycle;
-import play.inject.ConfigurationProvider;
 import play.inject.guice.GuiceApplicationBuilder;
 import play.mvc.Result;
 import play.test.Helpers;
 import play.test.WithApplication;
-import services.CSVHelper;
+import services.CSVRepository;
+import services.Storage;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,14 +19,13 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static play.test.Helpers.*;
-import static services.CSVHelper.createScheduleFromCSV;
 
 
 public class HomeControllerTest extends WithApplication{
 
-    private String scheduleCSV;
     private List<FridayLunch> loadedSchedule;
     private HomeController homeController;
+    private Storage storage;
 
     @Override
     protected Application provideApplication() {
@@ -41,14 +36,14 @@ public class HomeControllerTest extends WithApplication{
 
     @Before
     public void setUp() throws IOException {
-        scheduleCSV = new CSVHelper().getAbsolutePathOfResource("schedule.csv");
-        loadedSchedule = createScheduleFromCSV(scheduleCSV);
+        storage = new CSVRepository("apprentices.csv", "restaurants.csv", "schedule.csv", "employees.csv");
+        loadedSchedule = storage.getSchedule();
         homeController = new HomeController();
     }
 
     @After
     public void tearDown() throws Exception {
-        CSVHelper.saveRotaToCSV(loadedSchedule, scheduleCSV);
+        storage.saveSchedule(loadedSchedule);
     }
 
     @Test
