@@ -16,36 +16,52 @@
         <pageContainer>
             <scheduleContainer>
                 <schedule>
-                @for((lunch, index) <- lunches.zipWithIndex) {
                     <friday>
-                        <h2>@lunch.getDate</h2>
-                        <h3>@lunch.getApprentice.get().getName</h3>
-                        <form METHOD="post" action="/changeapprentice">
-                            <input type="hidden" value="@index" name="position"/>
-                            <input type="text" placeholder="Change Apprentice" name="newName"/>
-                            <input type="submit"/>
-                        </form>
-                        <br>
-                    </friday>
-                }
-                </schedule>
+                        <nextFriday>
+                            <h2>Next Friday: @lunches.get(0).getDate</h2>
+                            <h3>@lunches.get(0).getApprentice.get().getName</h3>
+                            <form METHOD="post" action="/changeapprentice">
+                                <input type="hidden" value="0" name="position"/>
+                                <input type="text" placeholder="Change Apprentice" name="newName"/>
+                                <input type="submit" value="SUBMIT"/>
+                            </form>
+                            <br>
+                            <hr>
+                        </nextFriday>
 
-                <restaurant>
-                @if(!lunches.get(0).getRestaurant.isPresent) {
-                    Please choose a menu:
-                    <form id="restaurants" METHOD="post" action="/assignrestaurant">
-                        <select name="restaurant" form="restaurants">
-                        @for((restaurant, index) <- restaurants.zipWithIndex) {
-                            <option value="@index">@restaurant.getName</option>
+                        <restaurant>
+                        @if(!lunches.get(0).getRestaurant.isPresent) {
+                            Please choose a menu:
+                            <form id="restaurants" METHOD="post" action="/assignrestaurant">
+                                <select name="restaurant" form="restaurants">
+                                @for((restaurant, index) <- restaurants.zipWithIndex) {
+                                    <option value="@index">@restaurant.getName</option>
+                                }
+                                </select>
+                                <input type="submit"/>
+                            </form>
+                        } else {
+                            @lunches.get(0).getRestaurant.get().getName
+                            <a href="@lunches.get(0).getRestaurant.get().getMenuLink">Menu</a>
                         }
-                        </select>
-                        <input type="submit"/>
-                    </form>
-                } else {
-                    @lunches.get(0).getRestaurant.get().getName
-                    <a href="@lunches.get(0).getRestaurant.get().getMenuLink">Menu</a>
-                }
-                </restaurant>
+                        </restaurant>
+
+                    </friday>
+
+                    @for(index <- 1 until lunches.size()) {
+                        <friday>
+                            <h2>@lunches.get(index).getDate</h2>
+                            <h3>@lunches.get(index).getApprentice.get().getName</h3>
+                            <form METHOD="post" action="/changeapprentice">
+                                <input type="hidden" value="@index" name="position"/>
+                                <input type="text" placeholder="Change Apprentice" name="newName"/>
+                                <input type="submit" value="SUBMIT"/>
+                            </form>
+                            <br>
+                            <hr>
+                        </friday>
+                    }
+                </schedule>
             </scheduleContainer>
 
             <orders>
@@ -61,7 +77,7 @@
                                 <label type="text">@employee.getName</label>
                                 <input type="hidden" value="@index" name="name"/>
                                 <input type="text" placeholder="Order" name="order"/>
-                                <input type="submit"/>
+                                <input type="submit" value="SUBMIT"/>
                             </form>
                         </li>
                     }
