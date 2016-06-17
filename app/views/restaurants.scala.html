@@ -1,0 +1,22 @@
+@import LunchManCore.FridayLunch
+@import LunchManCore.Restaurant
+
+@(lunches: List[FridayLunch], restaurants: List[Restaurant])
+
+<section class="restaurants">
+    @if(!lunches.get(0).getRestaurant.isPresent) {
+        Please choose a menu:
+        <form id="restaurants" METHOD="post" action="/assignrestaurant">
+            <select name="restaurant" form="restaurants">
+            @for((restaurant, index) <- restaurants.zipWithIndex) {
+                <option value="@index">@restaurant.getName</option>
+            }
+            </select>
+            <input type="submit"/>
+        </form>
+    } else {
+        @lunches.get(0).getRestaurant.get().getName
+        <br>
+        <a class="menubutton" href="@lunches.get(0).getRestaurant.get().getMenuLink">Menu</a>
+    }
+</section>
