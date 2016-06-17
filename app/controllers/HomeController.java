@@ -15,7 +15,8 @@ public class HomeController extends Controller {
     LunchManCore core = new LunchManCore(csv);
 
     public Result index() {
-        Rota rota = core.getCurrentSchedule();
+        DateFake fake = new DateFake(2017, 1, 7);
+        Rota rota = core.getCurrentSchedule(fake);
         return ok(index.render("LunchMan", rota.getSchedule(), core.getRestaurants(), core.getEmployees(), core.getGuests()));
     }
 
