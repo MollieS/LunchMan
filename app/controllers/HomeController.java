@@ -13,7 +13,6 @@ public class HomeController extends Controller {
 
     private CSVRepository csv = new CSVRepository("apprentices.csv", "restaurants.csv", "schedule.csv", "employees.csv", "guests.csv");
     private CurrentDate currentDate = new CurrentDate();
-    private DateFake fake = new DateFake(2016, 6, 28);
 
     public Result index() {
         LunchManCore core = LunchManCore.create(csv, currentDate);
