@@ -1,74 +1,50 @@
 package controllers;
 
-import LunchManCore.Apprentice;
-import LunchManCore.FridayLunch;
-import LunchManCore.Restaurant;
-import LunchManCore.Rota;
+import LunchManCore.*;
 import play.mvc.*;
 
-import services.CSVHelper;
+import services.CSVRepository;
 import views.html.*;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
-import static services.CSVHelper.createScheduleFromCSV;
 
-/**
- * This controller contains an action to handle HTTP requests
- * to the application's home page.
- */
 public class HomeController extends Controller {
 
-    private String apprenticeCSV = "/Users/molliestephenson/Java/LunchMan/csvs/apprentices.csv";
-    private String scheduleCSV = "/Users/molliestephenson/Java/LunchMan/csvs/schedule.csv";
-    private String restaurantCSV = "/Users/molliestephenson/Java/LunchMan/csvs/restaurants.csv";
-
-
-    private Rota rota = new Rota(4, LocalDate.now());
-
-    public HomeController() {}
-
-    public HomeController(String apprenticeCSV, String scheduleCSV, String restaurantCSV) {
-        this.apprenticeCSV = apprenticeCSV;
-        this.scheduleCSV = scheduleCSV;
-        this.restaurantCSV = restaurantCSV;
-    }
+    CSVRepository csv = new CSVRepository("apprentices.csv", "restaurants.csv", "schedule.csv", "employees.csv");
+    LunchManCore core = new LunchManCore(csv);
 
     public Result index() {
-        List<Apprentice> apprentices = new ArrayList<>();
-        List<Restaurant> restaurants = new ArrayList<>();
-        try {
-            CSVHelper.createRestaurantsFromCSV(restaurantCSV);
-            CSVHelper.createApprenticesFromCSV(apprenticeCSV);
-            List<FridayLunch> loadedSchedule = createScheduleFromCSV(scheduleCSV);
-            rota.setSchedule(loadedSchedule);
-            rota.updateSchedule(apprentices);
-            CSVHelper.saveRotaToCSV(rota.getSchedule(), scheduleCSV);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return ok(index.render("LunchMan", rota.getSchedule(), restaurants));
+        Rota rota = core.getCurrentSchedule();
+        return ok(index.render("LunchMan", rota.getSchedule(), core.getRestaurants(), core.getEmployees()));
     }
 
-    public Result changeSchedule() throws Exception {
+    public Result changeSchedule() {
         Map<String, String[]> request = request().body().asFormUrlEncoded();
-        List<FridayLunch> schedule = rota.getSchedule();
-        FridayLunch fridayLunch = schedule.get(Integer.valueOf(request.get("position")[0]));
-        fridayLunch.assignApprentice(new Apprentice(request.get("newName")[0]));
-        CSVHelper.saveRotaToCSV(rota.getSchedule(), scheduleCSV);
+        Integer friday = Integer.valueOf(request.get("position")[0]);
+        String newName = request.get("newName")[0];
+
+        core.assignApprenticeToLunch(friday, newName);
+
         return redirect("/");
     }
 
-    public Result assignMenu() throws Exception {
+    public Result assignMenu() {
         Map<String, String[]> request = request().body().asFormUrlEncoded();
-        List<Restaurant> restaurants = CSVHelper.createRestaurantsFromCSV(restaurantCSV);
-        List<FridayLunch> schedule = rota.getSchedule();
-        FridayLunch fridayLunch = schedule.get(0);
-        fridayLunch.assignRestaurant(restaurants.get(Integer.valueOf(request.get("restaurant")[0])));
-        CSVHelper.saveRotaToCSV(rota.getSchedule(), scheduleCSV);
+        Integer restaurant = Integer.valueOf(request.get("restaurant")[0]);
+
+        core.chooseNextFridayMenu(restaurant);
+
         return redirect("/");
     }
+
+    public Result newOrder() {
+        Map<String, String[]> request = request().body().asFormUrlEncoded();
+        Integer employee = Integer.valueOf(request.get("name")[0]);
+        String order = request.get("order")[0];
+
+        core.placeOrder(employee, order);
+        return redirect("/");
+    }
+
 }
