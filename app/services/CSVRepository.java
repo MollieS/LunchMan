@@ -17,12 +17,14 @@ public class CSVRepository implements Storage {
     private String scheduleCSV;
     private String restaurantCSV;
     private String employeesCSV;
+    private String guestsCSV;
 
-    public CSVRepository(String apprenticeCSV, String restaurantCSV, String scheduleCSV, String employeesCSV) {
+    public CSVRepository(String apprenticeCSV, String restaurantCSV, String scheduleCSV, String employeesCSV, String guestsCSV) {
         this.apprenticeCSV = getAbsolutePathOfResource(apprenticeCSV);
         this.scheduleCSV = getAbsolutePathOfResource(scheduleCSV);
         this.restaurantCSV = getAbsolutePathOfResource(restaurantCSV);
         this.employeesCSV = getAbsolutePathOfResource(employeesCSV);
+        this.guestsCSV = getAbsolutePathOfResource(guestsCSV);
     }
 
     public List<Apprentice> getApprentices() {
@@ -45,6 +47,16 @@ public class CSVRepository implements Storage {
             }
         }
         return employees;
+    }
+
+    public List<Guest> getGuests() {
+        List<String[]> guestList = loadCSV(guestsCSV);
+        List<Guest> guests = new ArrayList<>();
+        for (String[] guestListEntry : guestList) {
+            Guest guest = new Guest(guestListEntry[0], guestListEntry[1]);
+            guests.add(guest);
+        }
+        return guests;
     }
 
     public List<Restaurant> getRestaurants() {
@@ -115,7 +127,26 @@ public class CSVRepository implements Storage {
         }
     }
 
+    public void saveGuests(List<Guest> guests) {
+        CSVWriter csvWriter = null;
+        try {
+            csvWriter = new CSVWriter(new FileWriter(guestsCSV));
+            for (Guest guest : guests) {
+                String record = "";
+                record += guest.getName();
+                record += ",";
+                record += guest.getOrder();
+                String[] recordArray = record.split(",");
+                csvWriter.writeNext(recordArray);
+            }
+            csvWriter.close();
+        } catch (IOException e) {
+            throw new RuntimeException("Cannot load CSV");
+        }
+    }
+
     private static List<String[]> loadCSV(String csvPath) {
+        System.out.println("Loading CSV from: " + csvPath);
         List<String[]> result;
         try {
             CSVReader csvReader = new CSVReader(new FileReader(csvPath));

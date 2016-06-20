@@ -14,18 +14,21 @@ public class CSVRepositoryTest {
     private Storage csvStorage;
     private List<Employee> loadedEmployees;
     private List<FridayLunch> loadedSchedule;
+    private List<Guest> loadedGuests;
 
     @Before
     public void setUp() {
-        csvStorage = new CSVRepository("apprentices.csv", "restaurants.csv", "schedule.csv", "employees.csv");
+        csvStorage = new CSVRepository("apprentices.csv", "restaurants.csv", "schedule.csv", "employees.csv", "guests.csv");
         loadedEmployees = csvStorage.getEmployees();
         loadedSchedule = csvStorage.getSchedule();
+        loadedGuests = csvStorage.getGuests();
     }
 
     @After
     public void tearDown() {
         csvStorage.saveEmployees(loadedEmployees);
         csvStorage.saveSchedule(loadedSchedule);
+        csvStorage.saveGuests(loadedGuests);
     }
 
     @Test
@@ -55,6 +58,12 @@ public class CSVRepositoryTest {
         assertEquals("Peter", employees.get(0).getName());
     }
 
+    @Test
+    public void createsGuestsFromCSV() throws IOException {
+        List<Guest> guests = csvStorage.getGuests();
+        assertEquals("Tom", guests.get(0).getName());
+    }
+
    @Test
    public void updatesSavedCSVSchedule() throws Exception {
        List<FridayLunch> schedule = csvStorage.getSchedule();
@@ -73,6 +82,16 @@ public class CSVRepositoryTest {
         csvStorage.saveEmployees(employees);
         List<Employee> result = csvStorage.getEmployees();
         assertEquals("Peri Peri Egg", result.get(1).getOrder().get());
+    }
+
+    @Test
+    public void updatesSavedCSVGuests() throws Exception {
+        List<Guest> guests = csvStorage.getGuests();
+        Guest gary = new Guest("Gary", "Peri Peri Egg");
+        guests.add(gary);
+        csvStorage.saveGuests(guests);
+        List<Guest> result = csvStorage.getGuests();
+        assertEquals("Gary", result.get(1).getName());
     }
 
 }

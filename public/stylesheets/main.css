@@ -9,23 +9,26 @@ header {
     background-color: steelblue;
 }
 
-logo {
-    display: block;
+.logo {
     height: 2.8em;
     padding-top: 5px;
     padding-bottom: 5px;
     margin-left: 10px;
 }
 
-.logo {
+.title {
     margin: 0;
 }
 
-pageContainer {
-    margin: 30px;
+main {
+    width: 100%;
 }
 
-scheduleContainer {
+.rota {
+
+}
+
+.schedule {
     float: left;
     width: 45%;
     background-color: #f9f9f9;
@@ -35,7 +38,7 @@ scheduleContainer {
     padding: 15px;
 }
 
-orders {
+.orders {
     float: right;
     width: 45%;
     background-color: #f9f9f9;
@@ -45,19 +48,32 @@ orders {
     padding: 15px;
 }
 
-friday {
-    display: block;
+.day {
     border-radius: 3px;
     margin: 5px;
     padding: 10px;
+    position: relative;
 }
 
-nextFriday {
+.nextfriday {
     display: inline-block;
+    width: 45%;
+    height: 90%;
 }
 
-restaurant {
+.restaurants {
     display: inline-block;
+    width: 40%;
+    background-color: white;
+    color: steelblue;
+    border: solid 2px steelblue;
+    border-radius: 20px;
+    text-align: center;
+    padding: 5px;
+    margin: 5px;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 .order {
@@ -67,7 +83,7 @@ restaurant {
 }
 
 input[type="text"] {
-    padding: 10px;
+    padding: 7px;
     border: none;
     border-bottom: solid 2px steelblue;
     transition: border 0.3s;
@@ -81,7 +97,7 @@ input[type="submit"] {
     background-color: white;
     color: steelblue;
     margin-left: 10px;
-    padding: 7px;
+    padding: 6px;
     border: solid 2px steelblue;
     border-radius: 20px;
     transition: border 0.3s;

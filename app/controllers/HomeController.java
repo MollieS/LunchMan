@@ -11,12 +11,12 @@ import java.util.Map;
 
 public class HomeController extends Controller {
 
-    CSVRepository csv = new CSVRepository("apprentices.csv", "restaurants.csv", "schedule.csv", "employees.csv");
+    CSVRepository csv = new CSVRepository("apprentices.csv", "restaurants.csv", "schedule.csv", "employees.csv", "guests.csv");
     LunchManCore core = new LunchManCore(csv);
 
     public Result index() {
         Rota rota = core.getCurrentSchedule();
-        return ok(index.render("LunchMan", rota.getSchedule(), core.getRestaurants(), core.getEmployees()));
+        return ok(index.render("LunchMan", rota.getSchedule(), core.getRestaurants(), core.getEmployees(), core.getGuests()));
     }
 
     public Result changeSchedule() {
@@ -47,4 +47,12 @@ public class HomeController extends Controller {
         return redirect("/");
     }
 
+    public Result newGuest() {
+        Map<String, String[]> request = request().body().asFormUrlEncoded();
+        String name = request.get("name")[0];
+        String order = request.get("order")[0];
+
+        core.addAGuest(name, order);
+        return redirect("/");
+    }
 }

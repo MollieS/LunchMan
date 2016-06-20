@@ -1,0 +1,54 @@
+@import LunchManCore.Guest
+@import LunchManCore.Employee
+@import LunchManCore.FridayLunch
+
+@(lunches: List[FridayLunch], employees: List[Employee], guests: List[Guest])
+
+<aside class="orders">
+    @if(lunches.get(0).getRestaurant.isPresent) {
+        Please add your order:
+        <table>
+            <ul>
+            @for((employee, index) <- employees.zipWithIndex) {
+                <tr>
+                @if(employee.getOrder.isPresent) {
+                    <li class="order"><td>@employee.getName </td><td>@employee.getOrder.get()</td></li>
+                } else {
+                    <li class="order">
+                        <form id="orders" METHOD="post" action="/newOrder">
+                            <td><label type="text">@employee.getName</label></td>
+                            <td>
+                                <input type="hidden" value="@index" name="name"/>
+                                <input type="text" placeholder="Order" name="order"/>
+                                <input type="submit" value="SUBMIT"/>
+                            </td>
+                        </form>
+                    </li>
+                </tr>
+            }
+            }
+            </ul>
+        </table>
+        <table>
+            <ul>
+                @for((guest, index) <- guests.zipWithIndex) {
+                    <tr>
+                        <li class="order"><td>@guest.getName</td> <td>@guest.getOrder</td></li>
+                    </tr>
+                }
+                <tr>
+                    <li class="order">
+                        <form id="orders" METHOD="post" action="/newGuest">
+                            <td><label type="text">Add Guest:</label></td>
+                            <td>
+                                <input type="text" placeholder="Name" name="name"/>
+                                <input type="text" placeholder="Order" name="order"/>
+                                <input type="submit" value="SUBMIT"/>
+                            </td>
+                        </form>
+                    </li>
+                </tr>
+            </ul>
+        </table>
+    }
+</aside>

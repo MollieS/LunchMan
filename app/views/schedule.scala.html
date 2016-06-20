@@ -1,0 +1,41 @@
+@import LunchManCore.FridayLunch
+@import LunchManCore.Restaurant
+
+@(lunches: List[FridayLunch], restaurantList: List[Restaurant])
+
+<section class="schedule">
+    <section class="rota">
+        <section class="day">
+            <section class="nextfriday">
+                <h2>Next Friday: @lunches.get(0).getDate</h2>
+                <h3>@lunches.get(0).getApprentice.get().getName</h3>
+                <form METHOD="post" action="/changeapprentice">
+                    <input type="hidden" value="0" name="position"/>
+                    <input type="text" placeholder="Change Apprentice" name="newName"/>
+                    <input type="submit" value="SUBMIT"/>
+                </form>
+                <br>
+            </section>
+
+            @restaurants(lunches, restaurantList)
+
+            <hr>
+
+        </section>
+
+        @for(index <- 1 until lunches.size()) {
+            <section class="day">
+                <h2>@lunches.get(index).getDate</h2>
+                <h3>@lunches.get(index).getApprentice.get().getName</h3>
+                <form METHOD="post" action="/changeapprentice">
+                    <input type="hidden" value="@index" name="position"/>
+                    <input type="text" placeholder="Change Apprentice" name="newName"/>
+                    <input type="submit" value="SUBMIT"/>
+                </form>
+                <br>
+                <hr>
+            </section>
+        }
+    </section>
+</section>
+
