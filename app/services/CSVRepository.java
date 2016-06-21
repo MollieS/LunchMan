@@ -156,6 +156,7 @@ public class CSVRepository implements Storage {
     }
 
     private static List<String[]> loadCSV(String csvPath) {
+        System.out.println(csvPath);
         List<String[]> result;
         try {
             CSVReader csvReader = new CSVReader(new FileReader(csvPath));
