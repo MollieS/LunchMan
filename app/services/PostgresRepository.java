@@ -1,6 +1,7 @@
 package services;
 
 import LunchManCore.*;
+import com.google.inject.Inject;
 import play.db.Database;
 
 import java.sql.*;
@@ -12,6 +13,7 @@ public class PostgresRepository implements Storage {
 
     private Database db;
 
+    @Inject
     public PostgresRepository(Database db) {
         this.db = db;
     }
