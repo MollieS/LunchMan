@@ -11,7 +11,6 @@ import services.PostgresRepository;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -111,7 +110,7 @@ public class PostgresRepositoryTest {
     }
 
     @Test
-    public void updatesSavedCSVGuests() throws Exception {
+    public void updatesSavedGuests() throws Exception {
         List<Guest> guests = storage.getGuests();
         Guest gary = new Guest("Gary", "Peri Peri Egg");
         guests.add(gary);
@@ -120,4 +119,13 @@ public class PostgresRepositoryTest {
         assertEquals("Gary", result.get(1).getName());
     }
 
+    @Test
+    public void updatesSavedApprentices() throws Exception {
+        List<Apprentice> apprentices = storage.getApprentices();
+        Apprentice will = new Apprentice("Will");
+        apprentices.add(will);
+        storage.saveApprentices(apprentices);
+        List<Apprentice> result = storage.getApprentices();
+        assertEquals("Will", result.get(2).getName());
+    }
 }
