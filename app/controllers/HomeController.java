@@ -12,7 +12,7 @@ import java.util.Map;
 public class HomeController extends Controller {
     private Storage storage;
     private CurrentDate currentDate = new CurrentDate();
-    private DateFake fake = new DateFake(2016, 6, 28);
+    private DateFake fake = new DateFake(2016, 7, 24);
 
     @Inject
     public HomeController(Storage storage) {
