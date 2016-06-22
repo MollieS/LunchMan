@@ -12,15 +12,11 @@ import java.util.Map;
 public class HomeController extends Controller {
     private Storage storage;
     private CurrentDate currentDate = new CurrentDate();
-<<<<<<< HEAD
-=======
-    private DateFake fake = new DateFake(2016, 7, 24);
 
     @Inject
     public HomeController(Storage storage) {
         this.storage = storage;
     }
->>>>>>> e5758c4520bef7ac03f3bfdfec35d8bb97943139
 
     public Result index() {
         LunchManCore core = LunchManCore.create(storage, currentDate);
