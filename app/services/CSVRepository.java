@@ -145,7 +145,18 @@ public class CSVRepository implements Storage {
         }
     }
 
+    @Override
+    public void saveApprentices(List<Apprentice> list) {
+
+    }
+
+    @Override
+    public void saveRestaurants(List<Restaurant> list) {
+
+    }
+
     private static List<String[]> loadCSV(String csvPath) {
+        System.out.println(csvPath);
         List<String[]> result;
         try {
             CSVReader csvReader = new CSVReader(new FileReader(csvPath));

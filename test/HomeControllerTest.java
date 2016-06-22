@@ -44,7 +44,7 @@ public class HomeControllerTest extends WithApplication{
         loadedSchedule = storage.getSchedule();
         loadedEmployees = storage.getEmployees();
         loadedGuests = storage.getGuests();
-        homeController = new HomeController();
+        homeController = new HomeController(storage);
     }
 
     @After

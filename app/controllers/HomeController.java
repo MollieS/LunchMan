@@ -1,27 +1,31 @@
 package controllers;
 
 import LunchManCore.*;
+import com.google.inject.Inject;
 import play.mvc.*;
 
-import services.CSVRepository;
 import views.html.*;
 
 import java.util.Map;
 
 
 public class HomeController extends Controller {
-
-    private CSVRepository csv = new CSVRepository("apprentices.csv", "restaurants.csv", "schedule.csv", "employees.csv", "guests.csv");
+    private Storage storage;
     private CurrentDate currentDate = new CurrentDate();
-    private DateFake fake = new DateFake(2016, 6, 28);
+    private DateFake fake = new DateFake(2016, 7, 24);
+
+    @Inject
+    public HomeController(Storage storage) {
+        this.storage = storage;
+    }
 
     public Result index() {
-        LunchManCore core = LunchManCore.create(csv, currentDate);
+        LunchManCore core = LunchManCore.create(storage, currentDate);
         return ok(index.render("LunchMan", core.getSchedule(), core.getRestaurants(), core.getEmployees(), core.getGuests()));
     }
 
     public Result changeSchedule() {
-        LunchManCore core = LunchManCore.create(csv, currentDate);
+        LunchManCore core = LunchManCore.create(storage, currentDate);
         Map<String, String[]> request = request().body().asFormUrlEncoded();
         Integer friday = Integer.valueOf(request.get("position")[0]);
         String newName = request.get("newName")[0];
@@ -32,7 +36,7 @@ public class HomeController extends Controller {
     }
 
     public Result assignMenu() {
-        LunchManCore core = LunchManCore.create(csv, currentDate);
+        LunchManCore core = LunchManCore.create(storage, currentDate);
         Map<String, String[]> request = request().body().asFormUrlEncoded();
         Integer restaurant = Integer.valueOf(request.get("restaurant")[0]);
 
@@ -42,7 +46,7 @@ public class HomeController extends Controller {
     }
 
     public Result newOrder() {
-        LunchManCore core = LunchManCore.create(csv, currentDate);
+        LunchManCore core = LunchManCore.create(storage, currentDate);
         Map<String, String[]> request = request().body().asFormUrlEncoded();
         Integer employee = Integer.valueOf(request.get("name")[0]);
         String order = request.get("order")[0];
@@ -52,7 +56,7 @@ public class HomeController extends Controller {
     }
 
     public Result newGuest() {
-        LunchManCore core = LunchManCore.create(csv, currentDate);
+        LunchManCore core = LunchManCore.create(storage, currentDate);
         Map<String, String[]> request = request().body().asFormUrlEncoded();
         String name = request.get("name")[0];
         String order = request.get("order")[0];
