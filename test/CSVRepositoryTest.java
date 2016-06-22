@@ -11,86 +11,86 @@ import static org.junit.Assert.assertEquals;
 
 public class CSVRepositoryTest {
 
-    private Storage csvStorage;
+    private Storage storage;
     private List<Employee> loadedEmployees;
     private List<FridayLunch> loadedSchedule;
     private List<Guest> loadedGuests;
 
     @Before
     public void setUp() {
-        csvStorage = new CSVRepository("apprentices.csv", "restaurants.csv", "schedule.csv", "employees.csv", "guests.csv");
-        loadedEmployees = csvStorage.getEmployees();
-        loadedSchedule = csvStorage.getSchedule();
-        loadedGuests = csvStorage.getGuests();
+        storage = new CSVRepository("apprentices.csv", "restaurants.csv", "schedule.csv", "employees.csv", "guests.csv");
+        loadedEmployees = storage.getEmployees();
+        loadedSchedule = storage.getSchedule();
+        loadedGuests = storage.getGuests();
     }
 
     @After
     public void tearDown() {
-        csvStorage.saveEmployees(loadedEmployees);
-        csvStorage.saveSchedule(loadedSchedule);
-        csvStorage.saveGuests(loadedGuests);
+        storage.saveEmployees(loadedEmployees);
+        storage.saveSchedule(loadedSchedule);
+        storage.saveGuests(loadedGuests);
     }
 
     @Test
     public void createsApprenticesFromListOfNamesInCSV() throws Exception {
-        List<Apprentice> result = csvStorage.getApprentices();
+        List<Apprentice> result = storage.getApprentices();
         assertEquals("Mollie", result.get(0).getName());
         assertEquals("Nick", result.get(1).getName());
     }
 
     @Test
     public void createsRotaFromCSV() throws Exception {
-        List<FridayLunch> result = csvStorage.getSchedule();
+        List<FridayLunch> result = storage.getSchedule();
         assertEquals("Mollie", result.get(0).getApprentice().get().getName());
         assertEquals("Nick", result.get(1).getApprentice().get().getName());
     }
 
     @Test
     public void createsRestaurantsFromCSV() throws Exception {
-        List<Restaurant> result = csvStorage.getRestaurants();
+        List<Restaurant> result = storage.getRestaurants();
         assertEquals("Bahn Mi Bay", result.get(0).getName());
         assertEquals("Chillango", result.get(1).getName());
     }
 
     @Test
     public void createsEmployeesFromCSV() throws IOException {
-        List<Employee> employees = csvStorage.getEmployees();
+        List<Employee> employees = storage.getEmployees();
         assertEquals("Peter", employees.get(0).getName());
     }
 
     @Test
     public void createsGuestsFromCSV() throws IOException {
-        List<Guest> guests = csvStorage.getGuests();
+        List<Guest> guests = storage.getGuests();
         assertEquals("Tom", guests.get(0).getName());
     }
 
    @Test
    public void updatesSavedCSVSchedule() throws Exception {
-       List<FridayLunch> schedule = csvStorage.getSchedule();
+       List<FridayLunch> schedule = storage.getSchedule();
        Apprentice rabea = new Apprentice("Rabea");
        schedule.get(1).assignApprentice(rabea);
-       csvStorage.saveSchedule(schedule);
-       List<FridayLunch> result = csvStorage.getSchedule();
+       storage.saveSchedule(schedule);
+       List<FridayLunch> result = storage.getSchedule();
        assertEquals("Rabea", result.get(1).getApprentice().get().getName());
    }
 
 
     @Test
     public void updatesSavedCSVEmployees() throws Exception {
-        List<Employee> employees = csvStorage.getEmployees();
+        List<Employee> employees = storage.getEmployees();
         employees.get(1).addOrder("Peri Peri Egg");
-        csvStorage.saveEmployees(employees);
-        List<Employee> result = csvStorage.getEmployees();
+        storage.saveEmployees(employees);
+        List<Employee> result = storage.getEmployees();
         assertEquals("Peri Peri Egg", result.get(1).getOrder().get());
     }
 
     @Test
     public void updatesSavedCSVGuests() throws Exception {
-        List<Guest> guests = csvStorage.getGuests();
+        List<Guest> guests = storage.getGuests();
         Guest gary = new Guest("Gary", "Peri Peri Egg");
         guests.add(gary);
-        csvStorage.saveGuests(guests);
-        List<Guest> result = csvStorage.getGuests();
+        storage.saveGuests(guests);
+        List<Guest> result = storage.getGuests();
         assertEquals("Gary", result.get(1).getName());
     }
 

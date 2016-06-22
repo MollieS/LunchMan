@@ -10,5 +10,7 @@ libraryDependencies ++= Seq(
   javaJdbc,
   cache,
   javaWs,
-  "com.opencsv" % "opencsv" % "3.8"
+  evolutions,
+  "com.opencsv" % "opencsv" % "3.8",
+  "org.postgresql" % "postgresql" % "9.4.1208.jre7"
 )
