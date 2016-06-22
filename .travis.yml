@@ -1,6 +1,12 @@
-language: java
-jdk:
-      - oraclejdk8
+language: scala
 
-script:
-- sbt ++$TRAVIS_SCALA_VERSION
+jdk:
+- oraclejdk8
+
+script: sbt test
+
+services:
+- postgresql
+
+before_script:
+  - psql -c 'create database travis_ci_test;' -U postgres
