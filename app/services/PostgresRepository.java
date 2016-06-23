@@ -125,7 +125,19 @@ public class PostgresRepository implements Storage {
 
     @Override
     public void saveApprentices(List<Apprentice> list) {
-
+        Connection con = db.getConnection();
+        try {
+            con.prepareStatement("delete from apprentices;").executeUpdate();
+            for (Apprentice apprentice : list) {
+                String updateApprenticeString = "insert into apprentices (name) VALUES (?);";
+                PreparedStatement updateApprentice = con.prepareStatement(updateApprenticeString);
+                updateApprentice.setString(1, apprentice.getName());
+                updateApprentice.executeUpdate();
+            }
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

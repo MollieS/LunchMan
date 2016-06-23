@@ -11,6 +11,8 @@ POST    /assignrestaurant           controllers.HomeController.assignMenu
 
 POST    /newOrder                   controllers.HomeController.newOrder
 
+POST    /deleteOrder                controllers.HomeController.deleteOrder
+
 POST    /newGuest                   controllers.HomeController.newGuest
 
 # Map static resources from the /public folder to the /assets URL path

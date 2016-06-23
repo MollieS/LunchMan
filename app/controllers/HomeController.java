@@ -12,7 +12,7 @@ import java.util.Map;
 public class HomeController extends Controller {
     private Storage storage;
     private CurrentDate currentDate = new CurrentDate();
-    private DateFake fake = new DateFake(2016, 6, 28);
+    private DateFake fake = new DateFake(2016, 7, 24);
 
     @Inject
     public HomeController(Storage storage) {
@@ -62,6 +62,15 @@ public class HomeController extends Controller {
         String order = request.get("order")[0];
 
         core.addAGuest(name, order);
+        return redirect("/");
+    }
+
+    public Result deleteOrder() {
+        LunchManCore core = LunchManCore.create(storage, currentDate);
+        Map<String, String[]> request = request().body().asFormUrlEncoded();
+        Integer employee = Integer.valueOf(request.get("name")[0]);
+
+        core.deleteOrder(employee);
         return redirect("/");
     }
 }
