@@ -2,6 +2,8 @@ import LunchManCore.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import play.Configuration;
+import play.Environment;
 import services.CSVRepository;
 
 import java.io.IOException;
@@ -18,7 +20,7 @@ public class CSVRepositoryTest {
 
     @Before
     public void setUp() {
-        storage = new CSVRepository("apprentices.csv", "restaurants.csv", "schedule.csv", "employees.csv", "guests.csv");
+        storage = new CSVRepository(Environment.simple(), "test/resources/apprentices.csv", "test/resources/restaurants.csv", "test/resources/schedule.csv", "test/resources/employees.csv", "test/resources/guests.csv");
         loadedEmployees = storage.getEmployees();
         loadedSchedule = storage.getSchedule();
         loadedGuests = storage.getGuests();

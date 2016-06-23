@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static play.test.Helpers.*;
 
@@ -40,7 +41,7 @@ public class HomeControllerTest extends WithApplication{
 
     @Before
     public void setUp() throws IOException {
-        storage = new CSVRepository("apprentices.csv", "restaurants.csv", "schedule.csv", "employees.csv", "guests.csv");
+        storage = new CSVRepository(Environment.simple(), "test/resources/apprentices.csv", "test/resources/restaurants.csv", "test/resources/schedule.csv", "test/resources/employees.csv", "test/resources/guests.csv");
         loadedSchedule = storage.getSchedule();
         loadedEmployees = storage.getEmployees();
         loadedGuests = storage.getGuests();
@@ -163,6 +164,35 @@ public class HomeControllerTest extends WithApplication{
     }
 
     @Test
+    public void removeOrderRedirectsToIndex() throws Exception {
+        chooseMenu();
+        placeOrder("1", "Peri Peri Chicken");
+        Map form = new HashMap<String, String>();
+        form.put("name", "1");
+
+        Result result = invokeWithContext(Helpers.fakeRequest().bodyForm(form),
+                () -> homeController.deleteOrder());
+
+        assertEquals(SEE_OTHER, result.status());
+        assertEquals("/", result.header("Location").get());
+    }
+
+    @Test
+    public void canRemoveAnOrder() throws Exception {
+        chooseMenu();
+        placeOrder("1", "Peri Peri Chicken");
+        Map form = new HashMap<String, String>();
+        form.put("name", "1");
+
+        invokeWithContext(Helpers.fakeRequest().bodyForm(form),
+                () -> homeController.deleteOrder());
+
+        Result result = homeController.index();
+        assertFalse(contentAsString(result).contains("Peri Peri Chicken"));
+
+    }
+
+    @Test
     public void addingGuestRedirectsToIndex() throws Exception {
         chooseMenu();
         Map form = new HashMap<String, String>();
@@ -175,7 +205,6 @@ public class HomeControllerTest extends WithApplication{
         assertEquals(SEE_OTHER, orderResult.status());
         assertEquals("/", orderResult.header("Location").get());
     }
-
 
     @Test
     public void canAddAGuest() throws Exception {
@@ -190,6 +219,14 @@ public class HomeControllerTest extends WithApplication{
         Result result = homeController.index();
         assertTrue(contentAsString(result).contains("Gary"));
         assertTrue(contentAsString(result).contains("Tuna Melt"));
+    }
+
+    private void placeOrder(String position, String order) {
+        Map orderForm = new HashMap<String, String>();
+        orderForm.put("name", position);
+        orderForm.put("order", order);
+        invokeWithContext(Helpers.fakeRequest().bodyForm(orderForm),
+                () -> homeController.newOrder());
     }
 
     private void chooseMenu() {

@@ -12,7 +12,15 @@
             @for((employee, index) <- employees.zipWithIndex) {
                 <tr>
                 @if(employee.getOrder.isPresent) {
-                    <li class="order"><td>@employee.getName </td><td>@employee.getOrder.get()</td></li>
+                    <li class="order"><td>@employee.getName </td>
+                        <td>@employee.getOrder.get()</td>
+                        <td>
+                            <form METHOD="post" action="/deleteOrder">
+                                <input type="hidden" value="@index" name="name"/>
+                                <input type="submit" value="CHANGE"/>
+                            </form>
+                        </td>
+                    </li>
                 } else {
                     <li class="order">
                         <form id="orders" METHOD="post" action="/newOrder">
