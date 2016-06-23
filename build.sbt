@@ -15,3 +15,5 @@ libraryDependencies ++= Seq(
   "org.postgresql" % "postgresql" % "9.4.1208.jre7"
 )
 
+javaOptions in Test += "-Dconfig.file=conf/application.test.conf"
+
