@@ -6,7 +6,7 @@
 
 <aside class="orders">
     @if(lunches.get(0).getRestaurant.isPresent) {
-        Please add your order:
+        Please add your order, or alternatively write the name of the person who's order you would like to copy:
         <table>
             <ul>
             @for((employee, index) <- employees.zipWithIndex) {
