@@ -1,12 +1,15 @@
 language: scala
-
 jdk:
 - oraclejdk8
-
 script: sbt test
-
 services:
 - postgresql
-
 before_script:
-  - psql -c 'create database travis_ci_test;' -U postgres
+- psql -c "create database lunchman_test;" -U postgres
+- psql -c "create user lunchman_test with password 'test';" -U postgres
+- psql -c "grant all privileges on database lunchman_test to lunchman_test;" -U postgres
+deploy:
+  provider: heroku
+  api_key:
+    secure: UEFeLba3ne2jW5CMn3tBIJDJp9tQLU2NC1jdw2bXgWPgDWZAkvKBSBKvlPdzKCi4WFwhwokwDC7gEwLTrqbuBEdPnWGo+7Vic/GNl4yCzPjcOxnRndp4GwTv5oOSDcIZIj6t/0O92yvcD3Jh8+iQamjRxt+73/F3EWnCOqcN0bIsyC9HXDgeqROlNBbRtXo4hC7pqVuG6KpBBt2Trc4XmVhcv8Isdxur30A0h34HsKghsBwDmTcopzsCJ1c5b+IaafumKV5aUE5g6KFc7KsM9xrizuoKXz+/UvpGFZrkEIMsSIeYBqMs4lQaJJfBntmar0HlytPhyp71tPFiWf5eUCAU/IX7rwbBt/Gpac5LVAOcEN9tnypx/027PlnQhGObQ7i/BJElsXvK/mmE2Qs1J+WCKWeH5lvvOJoHEoqwF6RESslPiWUm3tU5kdzdvQGhTOG9YP7GjKhFzNEajYtaC69nUYqyHVbFoQkEM9ITWOc22EOCnPxVq21y2Vbl+MeaHfvnq+BwLrE8u2Kwrg3BKCGE9cGuvqSoU/0mtdZtlTMO9BFj+v1zZsORDMi4Her+d7Y9K4bpUc1DjLoHUSm8A7F7ZhtwbHLrVQfvgA5ni0K2kr+NDODo12i2Ak2beIvFLnRn9a9apySYg6lpVf/jotq9JESeLrqT/RtmKjUNuKw=
+  app: radiant-atoll-56902

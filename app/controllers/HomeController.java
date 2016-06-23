@@ -64,4 +64,13 @@ public class HomeController extends Controller {
         core.addAGuest(name, order);
         return redirect("/");
     }
+
+    public Result deleteOrder() {
+        LunchManCore core = LunchManCore.create(storage, currentDate);
+        Map<String, String[]> request = request().body().asFormUrlEncoded();
+        Integer employee = Integer.valueOf(request.get("name")[0]);
+
+        core.deleteOrder(employee);
+        return redirect("/");
+    }
 }
