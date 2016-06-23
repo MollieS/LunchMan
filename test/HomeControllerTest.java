@@ -41,7 +41,7 @@ public class HomeControllerTest extends WithApplication{
 
     @Before
     public void setUp() throws IOException {
-        storage = new CSVRepository("apprentices.csv", "restaurants.csv", "schedule.csv", "employees.csv", "guests.csv");
+        storage = new CSVRepository(Environment.simple(), "test/resources/apprentices.csv", "test/resources/restaurants.csv", "test/resources/schedule.csv", "test/resources/employees.csv", "test/resources/guests.csv");
         loadedSchedule = storage.getSchedule();
         loadedEmployees = storage.getEmployees();
         loadedGuests = storage.getGuests();

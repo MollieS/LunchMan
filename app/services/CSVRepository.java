@@ -1,8 +1,11 @@
 package services;
 
 import LunchManCore.*;
+import com.google.inject.Inject;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
+import play.Configuration;
+import play.Environment;
 
 import java.io.*;
 import java.net.URISyntaxException;
@@ -19,12 +22,13 @@ public class CSVRepository implements Storage {
     private String employeesCSV;
     private String guestsCSV;
 
-    public CSVRepository(String apprenticeCSV, String restaurantCSV, String scheduleCSV, String employeesCSV, String guestsCSV) {
-        this.apprenticeCSV = getAbsolutePathOfResource(apprenticeCSV);
-        this.scheduleCSV = getAbsolutePathOfResource(scheduleCSV);
-        this.restaurantCSV = getAbsolutePathOfResource(restaurantCSV);
-        this.employeesCSV = getAbsolutePathOfResource(employeesCSV);
-        this.guestsCSV = getAbsolutePathOfResource(guestsCSV);
+    @Inject
+    public CSVRepository(Environment env, String apprenticeCSV, String restaurantCSV, String scheduleCSV, String employeesCSV, String guestsCSV) {
+        this.apprenticeCSV = env.getFile(apprenticeCSV).getAbsolutePath();
+        this.scheduleCSV = env.getFile(scheduleCSV).getAbsolutePath();
+        this.restaurantCSV = env.getFile(restaurantCSV).getAbsolutePath();
+        this.employeesCSV = env.getFile(employeesCSV).getAbsolutePath();
+        this.guestsCSV = env.getFile(guestsCSV).getAbsolutePath();
     }
 
     public List<Apprentice> getApprentices() {
