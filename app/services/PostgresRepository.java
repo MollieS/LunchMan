@@ -7,7 +7,9 @@ import play.db.Database;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PostgresRepository implements Storage {
 
@@ -57,20 +59,26 @@ public class PostgresRepository implements Storage {
 
     @Override
     public List<Employee> getEmployees() {
-            List<Employee> employees = new ArrayList<Employee>();
+        List<Employee> employees = new ArrayList<Employee>();
         Connection con = db.getConnection();
-            try {
-                ResultSet names = con.prepareStatement("select * from employees;").executeQuery();
-                while (names.next()) {
-                    Employee employee = new Employee(names.getString("name"));
-                    employee.addOrder(names.getString("foodorder"));
-                    employees.add(employee);
-                }
-                con.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
+        try {
+            ResultSet names = con.prepareStatement("select * from employees;").executeQuery();
+            while (names.next()) {
+                Employee employee = new Employee(names.getString("name"));
+                employee.addOrder(names.getString("foodorder"));
+                employees.add(employee);
             }
-            return employees;
+            employees = sortEmployees(employees);
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return employees;
+    }
+
+    private List<Employee> sortEmployees(List<Employee> employees) {
+        Comparator<Employee> byName = (e1, e2) -> e1.getName().toLowerCase().compareTo(e2.getName().toLowerCase());
+        return employees.stream().sorted(byName).collect(Collectors.toList());
     }
 
     @Override
