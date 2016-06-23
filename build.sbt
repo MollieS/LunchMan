@@ -14,3 +14,5 @@ libraryDependencies ++= Seq(
   "com.opencsv" % "opencsv" % "3.8",
   "org.postgresql" % "postgresql" % "9.4.1208.jre7"
 )
+
+javaOptions in Test += "-Dconfig.file=conf/application.test.conf"
