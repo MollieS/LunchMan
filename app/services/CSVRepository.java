@@ -160,7 +160,6 @@ public class CSVRepository implements Storage {
     }
 
     private static List<String[]> loadCSV(String csvPath) {
-        System.out.println(csvPath);
         List<String[]> result;
         try {
             CSVReader csvReader = new CSVReader(new FileReader(csvPath));
@@ -170,13 +169,5 @@ public class CSVRepository implements Storage {
             throw new RuntimeException("Cannot load CSV");
         }
         return result;
-    }
-
-    private String getAbsolutePathOfResource(String name) {
-        try {
-            return new File(getClass().getClassLoader().getResource("resources/" + name).toURI()).getAbsolutePath();
-        } catch (URISyntaxException e) {
-            throw new RuntimeException("Resource not found");
-        }
     }
 }
