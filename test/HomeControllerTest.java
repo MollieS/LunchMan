@@ -131,7 +131,7 @@ public class HomeControllerTest extends WithApplication{
 
         Result result = homeController.index();
 
-        assertTrue(contentAsString(result).contains("Please add your order:"));
+        assertTrue(contentAsString(result).contains("Please add your order"));
     }
 
     @Test
