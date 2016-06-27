@@ -44,14 +44,18 @@ restart.
 $ sbt run
 ```
 
-
 ### Test Program
-To see the results in the command line:
+
 ```shell
-$ ./gradlew cleanTest test
+$ sbt clean coverage test
 ```
-Or in your browser:
+
+### Generate Coverage
+
+This assumes you have run the test command above first. The output from this
+command will show the absolute path to the coverage report.
+
 ```shell
-$ open reports/tests/index.html
+$ sbt coverageReport
 ```
 

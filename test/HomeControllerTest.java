@@ -3,6 +3,7 @@ import LunchManCore.FridayLunch;
 import LunchManCore.Guest;
 import LunchManCore.Storage;
 import controllers.HomeController;
+import controllers.routes;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -57,13 +58,13 @@ public class HomeControllerTest extends WithApplication{
 
     @Test
     public void indexPage() {
-        Result result = homeController.index();
+        Result result = route(routes.HomeController.index());
         assertEquals(OK, result.status());
     }
 
     @Test
     public void indexPageShowsApprenticeNames() {
-        Result result = homeController.index();
+        Result result = route(routes.HomeController.index());
         assertTrue(contentAsString(result).contains("LunchMan"));
         assertTrue(contentAsString(result).contains("Priya"));
         assertTrue(contentAsString(result).contains("Mollie"));
@@ -77,7 +78,7 @@ public class HomeControllerTest extends WithApplication{
         form.put("position", "0");
         form.put("newName", "Ced");
 
-        Result postResult = invokeWithContext(Helpers.fakeRequest().bodyForm(form), () -> homeController.changeSchedule());
+        Result postResult = route(fakeRequest(routes.HomeController.changeSchedule()).bodyForm(form));
 
         assertEquals(SEE_OTHER, postResult.status());
         assertEquals("/", postResult.header("Location").get());
@@ -89,7 +90,7 @@ public class HomeControllerTest extends WithApplication{
         form.put("position", "0");
         form.put("newName", "Ced");
 
-       invokeWithContext(Helpers.fakeRequest().bodyForm(form), () -> homeController.changeSchedule());
+        invokeWithContext(Helpers.fakeRequest().bodyForm(form), () -> homeController.changeSchedule());
 
         Result result = homeController.index();
         assertTrue(contentAsString(result).contains("Ced"));
@@ -106,8 +107,7 @@ public class HomeControllerTest extends WithApplication{
         Map form = new HashMap<String, String>();
         form.put("restaurant", "2");
 
-        Result postResult = invokeWithContext(Helpers.fakeRequest().bodyForm(form),
-                () -> homeController.assignMenu());
+        Result postResult = route(fakeRequest(routes.HomeController.assignMenu()).bodyForm(form));
 
         assertEquals(SEE_OTHER, postResult.status());
         assertEquals("/", postResult.header("Location").get());
@@ -141,8 +141,7 @@ public class HomeControllerTest extends WithApplication{
         form.put("name", "1");
         form.put("order", "Peri Peri Chicken");
 
-        Result orderResult = invokeWithContext(Helpers.fakeRequest().bodyForm(form),
-                () -> homeController.newOrder());
+        Result orderResult = route(fakeRequest(routes.HomeController.newOrder()).bodyForm(form));
 
         assertEquals(SEE_OTHER, orderResult.status());
         assertEquals("/", orderResult.header("Location").get());
@@ -170,8 +169,7 @@ public class HomeControllerTest extends WithApplication{
         Map form = new HashMap<String, String>();
         form.put("name", "1");
 
-        Result result = invokeWithContext(Helpers.fakeRequest().bodyForm(form),
-                () -> homeController.deleteOrder());
+        Result result = route(fakeRequest(routes.HomeController.deleteOrder()).bodyForm(form));
 
         assertEquals(SEE_OTHER, result.status());
         assertEquals("/", result.header("Location").get());
@@ -199,8 +197,7 @@ public class HomeControllerTest extends WithApplication{
         form.put("name", "Gary");
         form.put("order", "Peri Peri Chicken");
 
-        Result orderResult = invokeWithContext(Helpers.fakeRequest().bodyForm(form),
-                () -> homeController.newGuest());
+        Result orderResult = route(fakeRequest(routes.HomeController.newGuest()).bodyForm(form));
 
         assertEquals(SEE_OTHER, orderResult.status());
         assertEquals("/", orderResult.header("Location").get());
