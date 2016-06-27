@@ -12,8 +12,8 @@ libraryDependencies ++= Seq(
   javaWs,
   evolutions,
   "com.opencsv" % "opencsv" % "3.8",
-  "org.postgresql" % "postgresql" % "9.4.1208.jre7"
-  "org.scoverage" % "sbt-scoverage" % "1.3.5"
+  "org.postgresql" % "postgresql" % "9.4.1208.jre7",
+  "org.scoverage" % "sbt-scoverage" % "1.3.5",
   "org.scoverage" % "sbt-coveralls" % "1.1.0"
 )
 
