@@ -17,4 +17,4 @@ libraryDependencies ++= Seq(
 
 javaOptions in Test += "-Dconfig.file=conf/application.test.conf"
 
-/*coverageExcludedPackages := "<empty>;controllers\\..*Reverse.*"*/
+coverageExcludedPackages := "controllers\\.javascript\\..*"

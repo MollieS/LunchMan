@@ -58,7 +58,13 @@ public class HomeControllerTest extends WithApplication{
 
     @Test
     public void indexPage() {
-        Result result = route(routes.HomeController.index());
+        Result result = route(fakeRequest("GET", "/"));
+        assertEquals(OK, result.status());
+    }
+
+    @Test
+    public void cssAssets() {
+        Result result = route(fakeRequest("GET", "/assets/stylesheets/main.css"));
         assertEquals(OK, result.status());
     }
 
