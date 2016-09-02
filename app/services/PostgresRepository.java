@@ -157,6 +157,7 @@ public class PostgresRepository implements Storage {
     public void saveSchedule(List<FridayLunch> list) {
         Connection con = db.getConnection();
         try {
+            con.setAutoCommit(false);
             con.prepareStatement("delete from schedule;").executeUpdate();
             for (FridayLunch lunch : list) {
                 String updateString = "insert into schedule (date, apprentice) VALUES (?, ?);";
@@ -171,12 +172,18 @@ public class PostgresRepository implements Storage {
                     updateScheduleRestaurant.setString(2, lunch.getRestaurant().get().getMenuLink());
                     updateScheduleRestaurant.setString(3, String.valueOf(lunch.getDate()));
                     updateScheduleRestaurant.executeUpdate();
-
                 }
+                con.commit();
             }
-            con.close();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                con.setAutoCommit(true);
+                con.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
